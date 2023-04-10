@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">IMDBKATA</string>
+    <string name="name">Nombre</string>
+    <string name="mail">Correo</string>
+    <string name="password">Contraseña</string>
+    <string name="username">Usuario</string>
+    <string name="login">Login</string>
+    <string name="accept">Aceptar</string>
+    <string name="forgot_password">¿Olvidates la contraseña?</string>
+    <string name="try_text">Ó podeis ingresar con</string>
+    <string name="guest_text">Continuar como invitado</string>
+    <string name="not_has_account">¿No teneis cuenta?</string>
+    <string name="to_register">Regístrate</string>
+    <string name="google">google</string>
+    <string name="facebook">facebook</string>
+    <string name="apple">apple</string>
+    <string name="user_creating_text">Crear una cuenta</string>
+    <string name="user_register_tips">La contraseña debe tener 8 caracteres, como mímimo una mayúscula y caracteres especiales</string>
+    <string name="error_get_data">No se obtuvieron datos</string>
+    <string name="welcome_format">Bienvenido %s</string>
+    <string name="search_movies">Buscar pelicula</string>
+    <string name="guest">Invitado</string>
+    <string name="register_completely">Registro completo</string>
+    <string name="email_exist">Email ya existe</string>
+</resources>

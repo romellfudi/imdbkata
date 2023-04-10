@@ -1,0 +1,44 @@
+name: Android CI
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths-ignore:
+      - "**.md"
+  workflow_dispatch:
+
+jobs:
+  build_android_components:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: set up JDK 1.11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+      - name: Enable Executions
+        run: chmod +x gradlew
+      - name: Build App with Gradle
+        run: ./gradlew assembleDebug
+      - name: Testing unit-cases from :login module
+        run: ./gradlew assembleDebug lint testDebugUnitTest -p login
+      - name: Upload Testing login module
+        uses: actions/upload-artifact@v1
+        with:
+          name: login-module-unit-test
+          path: login/build/reports/tests/testDebugUnitTest
+      - name: Testing unit-cases cases from :home module
+        run: ./gradlew assembleDebug lint testDebugUnitTest -p home
+      - name: Upload Testing home module
+        uses: actions/upload-artifact@v1
+        with:
+          name: home-module-unit-test
+          path: home/build/reports/tests/testDebugUnitTest
+      - name: Upload app artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: imdbKataApp.apk
+          path: app/build/outputs/apk/debug/app-debug.apk

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">IMDBKATA</string>
+    <string name="login">Login</string>
+    <string name="accept">Aceptar</string>
+    <string name="to_register">Regístrate</string>
+    <string name="guest">Invitado</string>
+    <string name="guest_text">Continuar como invitado</string>
+</resources>

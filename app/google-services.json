@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "739812720808",
+    "project_id": "yostinimdb",
+    "storage_bucket": "yostinimdb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739812720808:android:bd63fb7ac106f0c899c29d",
+        "android_client_info": {
+          "package_name": "com.example.imdbkata"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "739812720808-esvnrjif16ligvm4m0t80drhg7tmv5s4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.imdbkata",
+            "certificate_hash": "97cc936206a90ec413f29fe85e68bf6567558af8"
+          }
+        },
+        {
+          "client_id": "739812720808-f0799vtmnnsekmbmfnpepcs4fdqd76lj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA4UROk3ZtmN1YKCiNbY6SW7NSy5yruMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "739812720808-f0799vtmnnsekmbmfnpepcs4fdqd76lj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,6 @@
+rootProject.name = "IMDBKATA"
+include ':app'
+include ':core'
+include ':data'
+include ':login'
+include ':home'

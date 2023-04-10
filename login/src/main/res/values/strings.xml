@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">IMDBKATA</string>
+    <string name="name">Name</string>
+    <string name="mail">Email</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="login">Login</string>
+    <string name="accept">Accept</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="try_text">Or you can sign in with</string>
+    <string name="guest_text">Continue as guest</string>
+    <string name="not_has_account">Don\'t have an account?</string>
+    <string name="to_register">Register</string>
+    <string name="google">Google</string>
+    <string name="facebook">Facebook</string>
+    <string name="apple">Apple</string>
+    <string name="user_creating_text">Create an account</string>
+    <string name="user_register_tips">Password must be 8 characters, at least one upper case and special character</string>
+    <string name="error_get_data">Failed to retrieve data</string>
+    <string name="welcome_format">Welcome %s</string>
+    <string name="search_movies">Search movies</string>
+    <string name="guest">Guest</string>
+    <string name="register_completely">Register completely</string>
+    <string name="email_exist">Email is already existed</string>
+    <string name="default_web_client_id" translatable="false">739812720808-f0799vtmnnsekmbmfnpepcs4fdqd76lj.apps.googleusercontent.com</string>
+    <string name="facebook_application_id" translatable="false">486851504734618</string>
+    <string name="facebook_client_token" translatable="false">31a03ba8b2a003bdc02d86fd73c07e1f</string>
+</resources>
