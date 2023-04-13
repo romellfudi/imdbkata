@@ -2,43 +2,39 @@ package com.example.home.ui.views
 
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.repeatOnLifecycle
-import coil.compose.rememberAsyncImagePainter
-import com.example.core.view.Color2
-import com.example.core.view.Color3
-import com.example.core.view.Color4
-import com.example.core.view.compose.FailedAnimation
-import com.example.core.view.compose.LoadingAnimation
-import com.example.core.view.getTextFieldColors
-import com.example.home.R
-import com.example.home.helpers.HomeState
-import com.example.home.ui.dataview.MovieView
-import com.example.home.ui.viewmodels.HomeViewModel
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.core.view.*
+import com.example.home.ui.viewmodels.*
 
 /**
  * @author @romellfudi
@@ -47,30 +43,25 @@ import com.example.home.ui.viewmodels.HomeViewModel
  */
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel,
     backScreen: () -> Unit,
-    isDark: Boolean = isSystemInDarkTheme()
+    viewModel: HomeViewModel,
+    initViewModel: HomeIntViewModel,
+    searchViewModel: HomeSearchViewModel,
+    playerViewModel: HomePlayerViewModel,
+    profileViewModel: HomeProfileViewModel,
+    modifier: Modifier = Modifier
 ) {
 
     val backPressDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    val genresDict = viewModel.genresDict.collectAsState(emptyMap())
-    val filteredMovies by viewModel.filteredMovieList.collectAsState(emptyList())
-    val isLoading = remember { viewModel.isLoading }
-    val queryValue: String by viewModel.query.observeAsState(initial = "")
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(Unit) {
         lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
             viewModel.shouldGoToLogin.collect {
-                if (it)
+                if (it) {
                     backScreen()
+                }
             }
-        }
-    }
-
-    LaunchedEffect("Load Movies") {
-        viewModel.apply{
-            loadRemoteData()
         }
     }
 
@@ -97,110 +88,193 @@ fun HomeScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(5.dp)
-    ) {
-        Row(modifier = Modifier.padding(5.dp)) {
-            TextField(
-                colors = getTextFieldColors(isDark),
-                singleLine = true,
-                modifier = Modifier
-                    .semantics { testTag = "home_screen_search_field" }
-                    .fillMaxWidth(),
-                value = queryValue,
-                onValueChange = { viewModel.filterMovies(it) },
-                label = { Text(stringResource(R.string.search_movies)) },
-                leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search Icon") }
-            )
-        }
-
-        when (isLoading.value) {
-            is HomeState.Loading -> {
-                LoadingAnimation(modifier = Modifier.fillMaxSize())
-            }
-            is HomeState.Error -> {
-                FailedAnimation(modifier = Modifier.fillMaxSize())
-            }
-            is HomeState.Ready -> {
-                MoviesList(
-                    movies = filteredMovies,
-                    genres = genresDict.value,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
+    val navController = rememberNavController()
+    Scaffold(
+        bottomBar = { BottomBar(navController = navController) },
+        modifier = modifier
+    ) { paddingValues ->
+        BottomNavGraph(
+            navController = navController,
+            initViewModel = initViewModel,
+            searchViewModel = searchViewModel,
+            playerViewModel = playerViewModel,
+            profileViewModel = profileViewModel,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = paddingValues.calculateBottomPadding())
+        )
     }
+
 }
 
 @Composable
-fun MoviesList(
-    movies: List<MovieView>,
-    genres: Map<Int, String>,
+fun BottomBar(
+    navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier.semantics { testTag = "home_screen_list" },
-        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
+    val navStackBackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navStackBackEntry?.destination
+
+    ConstraintLayout(
+        modifier = modifier
+            .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .background(Color1)
+            .fillMaxWidth()
     ) {
-        items(movies) {
-            MovieCard(movie = it, genres = genres)
+        val (movie, search, ticket, profile,b) = createRefs()
+        TabView(
+            screen = TapViewState.Init,
+            currentDestination = currentDestination,
+            navController = navController,
+            modifier = Modifier
+                .constrainAs(movie) {
+                    start.linkTo(parent.start, spacing_10)
+                    end.linkTo(search.start)
+                    linkTo(
+                        top = parent.top,
+                        topMargin = spacing_15,
+                        bottomMargin = spacing_15,
+                        bottom = parent.bottom
+                    )
+                }
+        )
+        TabView(
+            screen = TapViewState.Search,
+            currentDestination = currentDestination,
+            navController = navController,
+            modifier = Modifier.constrainAs(search) {
+                start.linkTo(movie.end, spacing_10)
+                end.linkTo(ticket.start)
+                linkTo(
+                    top = parent.top,
+                    topMargin = spacing_15,
+                    bottomMargin = spacing_15,
+                    bottom = parent.bottom
+                )
+            }
+        )
+        TabView(
+            screen = TapViewState.Play,
+            currentDestination = currentDestination,
+            navController = navController,
+            modifier = Modifier.constrainAs(ticket) {
+                start.linkTo(search.end, spacing_10)
+                end.linkTo(profile.start)
+                linkTo(
+                    top = parent.top,
+                    topMargin = spacing_15,
+                    bottomMargin = spacing_15,
+                    bottom = parent.bottom
+                )
+            }
+        )
+        TabView(
+            screen = TapViewState.Profile,
+            currentDestination = currentDestination,
+            navController = navController,
+            modifier = Modifier.constrainAs(profile) {
+                start.linkTo(ticket.end)
+                end.linkTo(parent.end, spacing_10)
+                linkTo(
+                    top = parent.top,
+                    topMargin = spacing_15,
+                    bottomMargin = spacing_15,
+                    bottom = parent.bottom
+                )
+            }
+        )
+    }
+}
+
+@Composable
+fun TabView(
+    screen: TapViewState,
+    currentDestination: NavDestination?,
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
+
+    val contentColor =
+        if (selected) Color.Black else Color.Black.copy(alpha = 0.3f)
+
+    ConstraintLayout(
+        modifier = modifier
+            .height(spacing_12)
+            .clip(CircleShape)
+            .padding(
+                start = spacing_10,
+                end = spacing_10,
+                top = spacing_10,
+                bottom = spacing_10
+            )
+            .clickable(onClick = {
+                navController.navigate(screen.route) {
+                    popUpTo(navController.graph.findStartDestination().id)
+                    launchSingleTop = true
+                }
+            })
+    ) {
+        val (icon, text) = createRefs()
+        Icon(
+            imageVector = screen.icon,
+            contentDescription = "icon",
+            tint = contentColor,
+            modifier = Modifier.constrainAs(icon) {
+                linkTo(
+                    start = parent.start,
+                    end = parent.end
+                )
+                top.linkTo(parent.top)
+            }
+        )
+        AnimatedVisibility(
+            visible = selected,
+            modifier = Modifier.constrainAs(text) {
+                linkTo(
+                    start = parent.start,
+                    end = parent.end
+                )
+                linkTo(
+                    top = icon.bottom,
+                    bottom = parent.bottom
+                )
+            }
+        ) {
+            Text(
+                text = screen.title,
+                color = contentColor
+            )
         }
     }
 }
 
 @Composable
-fun MovieCard(movie: MovieView, genres: Map<Int, String>) {
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 4.dp, vertical = 8.dp)
-            .fillMaxWidth(),
-        elevation = 3.dp,
-        backgroundColor = Color3,
-        shape = RoundedCornerShape(corner = CornerSize(6.dp))
+fun BottomNavGraph(
+    navController: NavHostController,
+    initViewModel: HomeIntViewModel,
+    searchViewModel: HomeSearchViewModel,
+    playerViewModel: HomePlayerViewModel,
+    profileViewModel: HomeProfileViewModel,
+    modifier: Modifier = Modifier
+) {
+    NavHost(
+        navController = navController,
+        startDestination = TapViewState.Init.route,
+        modifier = modifier
     ) {
-        Row(modifier = Modifier.padding(8.dp)) {
-            Image(
-                painter =
-                rememberAsyncImagePainter(movie.posterUrl),
-                contentDescription = "Movie poster",
-                contentScale = ContentScale.FillHeight,
-                modifier = Modifier
-                    .padding(1.dp)
-                    .size(130.dp)
-            )
-            Column(
-                modifier = Modifier.weight(1f),
-                Arrangement.Center
-            ) {
-                Text(
-                    text = movie.title,
-                    style = TextStyle(
-                        color = Color2,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                )
-                Text(
-                    text = movie.releaseDate,
-                    style = TextStyle(
-                        color = Color4,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                Text(
-                    text = movie.genreIds.map { genres[it] }.joinToString(", "),
-                    style = TextStyle(
-                        color = Color4,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontStyle = FontStyle.Italic
-                    )
-                )
-            }
+        composable(route = TapViewState.Init.route) {
+            HomeInitScreen(viewModel = initViewModel)
+        }
+        composable(route = TapViewState.Search.route) {
+            HomeSearchScreen(viewModel = searchViewModel)
+        }
+
+        composable(route = TapViewState.Play.route) {
+            HomePlayScreen(viewModel = playerViewModel)
+        }
+        composable(route = TapViewState.Profile.route) {
+            HomeProfileScreen(viewModel = profileViewModel)
         }
     }
 }

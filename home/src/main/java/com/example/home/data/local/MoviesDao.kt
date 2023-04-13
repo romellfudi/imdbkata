@@ -44,4 +44,8 @@ interface MoviesDao {
         deleteAll()
         insertAllMovies(data)
     }
+
+    // fun to check if exist at least one row in the table
+    @Query("SELECT EXISTS(SELECT 1 FROM movies LIMIT 1)")
+    fun existDataStored(): Boolean
 }

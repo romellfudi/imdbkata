@@ -28,7 +28,7 @@ import javax.inject.Inject
  * @version 1.0.a
  */
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class HomeProfileViewModel @Inject constructor(
     private val existLocalDataUseCase: ExistLocalDataUseCase,
     private val fetchTopRatedMoviesUseCase: FetchTopRatedMoviesUseCase,
     private val fetchPopularMoviesUseCase: FetchPopularMoviesUseCase,

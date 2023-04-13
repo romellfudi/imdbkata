@@ -50,4 +50,8 @@ class HomeFetchMoviesRepository @Inject constructor(
         moviesDao.updateRecommendedMovies(id,recommendedMovies)
     }
 
+    suspend fun existDataStored() = withContext(Dispatchers.IO) {
+        moviesDao.existDataStored()
+    }
+
 }

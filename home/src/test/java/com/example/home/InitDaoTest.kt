@@ -23,7 +23,7 @@ import org.robolectric.annotation.Config
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [21])
-class MovieDaoTest {
+class InitDaoTest {
 
     private lateinit var moviesDao: MoviesDao
     private lateinit var db: MovieDataBase
