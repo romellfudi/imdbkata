@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">IMDBKATA</string>
     <string name="search_movies">Search movies</string>
-    <string name="default_profile_url" translatable="false">https://avatars.githubusercontent.com/u/1668017?v=4</string>
+    <string name="default_profile_url" translatable="false">https://upload.wikimedia.org/wikipedia/commons/f/f7/Brendan_Fraser_October_2022.jpg</string>
     <string name="following">Following</string>
     <string name="creation_list">Create a tracking list so you don\'t miss any movie or tv series.</string>
     <string name="best_movies">The best collections</string>
