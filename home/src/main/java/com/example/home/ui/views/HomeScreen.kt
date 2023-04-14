@@ -1,6 +1,7 @@
 package com.example.home.ui.views
 
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -52,6 +53,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
 
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
     val backPressDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     val navController = rememberNavController()
 
@@ -59,7 +61,40 @@ fun HomeScreen(
         searchViewModel.search()
     }
 
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    OnBackDispatcherCompose(
+        backScreen = backScreen,
+        viewModel = viewModel,
+        backPressDispatcher = backPressDispatcher,
+        lifecycle = lifecycle
+    )
+
+    Scaffold(
+        bottomBar = { BottomBar(navController = navController) },
+        modifier = modifier
+    ) { paddingValues ->
+        OptionsNavHost(
+            navController = navController,
+            viewModel = viewModel,
+            initViewModel = initViewModel,
+            searchViewModel = searchViewModel,
+            playerViewModel = playerViewModel,
+            profileViewModel = profileViewModel,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = paddingValues.calculateBottomPadding())
+        )
+    }
+
+}
+
+
+@Composable
+fun OnBackDispatcherCompose(
+    backScreen: () -> Unit,
+    viewModel: HomeViewModel,
+    backPressDispatcher: OnBackPressedDispatcher?,
+    lifecycle: Lifecycle
+) {
     LaunchedEffect(Unit) {
         lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
             viewModel.shouldGoToLogin.collect {
@@ -69,7 +104,6 @@ fun HomeScreen(
             }
         }
     }
-
     val callback = remember(backScreen) {
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -92,24 +126,6 @@ fun HomeScreen(
             lifecycle.removeObserver(lifecycleObserver)
         }
     }
-
-    Scaffold(
-        bottomBar = { BottomBar(navController = navController) },
-        modifier = modifier
-    ) { paddingValues ->
-        OptionsNavHost(
-            navController = navController,
-            viewModel = viewModel,
-            initViewModel = initViewModel,
-            searchViewModel = searchViewModel,
-            playerViewModel = playerViewModel,
-            profileViewModel = profileViewModel,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = paddingValues.calculateBottomPadding())
-        )
-    }
-
 }
 
 @Composable

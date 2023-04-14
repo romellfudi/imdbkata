@@ -100,15 +100,16 @@ class MainActivity : ComponentActivity() {
                                 searchViewModel,
                                 playerViewModel,
                                 profileViewModel,
-                                )
+                            )
                         }
+
                     }
                 }
             }
         }
     }
 
-    fun showTextInToast(text: String) {
+    private fun showTextInToast(text: String) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
     }
 
