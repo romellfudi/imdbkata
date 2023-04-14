@@ -34,7 +34,7 @@ data class Movie(
     val overview: String,
     val popularity: Double,
     @Json(name = "poster_path")
-    val posterPath: String,
+    val posterPath: String?,
     @Json(name = "release_date")
     val releaseDate: String,
     val title: String,
@@ -49,7 +49,7 @@ data class Movie(
 ) : Serializable {
 
     val posterUrl: String
-        get() = if (posterPath.isBlank())
+        get() = if (posterPath.isNullOrEmpty())
             "https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg"
         else
             "https://image.tmdb.org/t/p/w500$posterPath"

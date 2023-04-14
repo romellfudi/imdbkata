@@ -42,7 +42,7 @@ import com.example.home.ui.viewmodels.HomeSearchViewModel
 @Composable
 fun HomeSearchScreen(
     viewModel: HomeSearchViewModel,
-    goToDetail: (Int) -> Unit,
+    toMovieDetail: (Int) -> Unit,
     isDark: Boolean = isSystemInDarkTheme()
 ) {
 
@@ -68,7 +68,7 @@ fun HomeSearchScreen(
                 viewModel = viewModel,
                 movies = filteredMovies,
                 genres = genresDict.value,
-                goToDetail = goToDetail,
+                toMovieDetail = toMovieDetail,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -81,7 +81,7 @@ fun MoviesList(
     viewModel: HomeSearchViewModel,
     movies: List<MovieView>,
     genres: Map<Int, String>,
-    goToDetail: (Int) -> Unit,
+    toMovieDetail: (Int) -> Unit,
     isDark: Boolean = isSystemInDarkTheme(),
     modifier: Modifier = Modifier
 ) {
@@ -122,7 +122,7 @@ fun MoviesList(
             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
         ) {
             items(movies) {
-                MovieCard(movie = it, genres = genres, goToDetail = goToDetail)
+                MovieCard(movie = it, genres = genres, toMovieDetail = toMovieDetail)
             }
         }
     }
@@ -133,13 +133,13 @@ fun MoviesList(
 fun MovieCard(
     movie: MovieView,
     genres: Map<Int, String>,
-    goToDetail: (Int) -> Unit
+    toMovieDetail: (Int) -> Unit
 ) {
     Card(
         modifier = Modifier
             .padding(horizontal = 4.dp, vertical = 8.dp)
             .fillMaxWidth(),
-        onClick = { goToDetail(movie.id) },
+        onClick = { toMovieDetail(movie.id) },
         elevation = 3.dp,
         backgroundColor = Color3,
         shape = RoundedCornerShape(corner = CornerSize(6.dp))

@@ -43,7 +43,7 @@ import com.example.home.ui.viewmodels.HomeIntViewModel
 @Composable
 fun HomeInitScreen(
     viewModel: HomeIntViewModel,
-    goToDetail: (Int) -> Unit,
+    toMovieDetail: (Int) -> Unit,
     isDark: Boolean = isSystemInDarkTheme(),
     modifier: Modifier = Modifier
 ) {
@@ -64,10 +64,10 @@ fun HomeInitScreen(
             FailedAnimation(modifier = Modifier.fillMaxSize())
         }
         is HomeState.Ready -> {
-            MovieContent(
+            InitView(
                 movieTopRatedList,
                 moviePopularList,
-                goToDetail = goToDetail,
+                toMovieDetail = toMovieDetail,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -76,10 +76,10 @@ fun HomeInitScreen(
 }
 
 @Composable
-fun MovieContent(
+fun InitView(
     movieTopRatedList: List<MovieView>,
     moviePopularList: List<MovieView>,
-    goToDetail: (Int) -> Unit,
+    toMovieDetail: (Int) -> Unit,
     modifier: Modifier
 ) {
     val state = rememberScrollState()
@@ -100,12 +100,12 @@ fun MovieContent(
                         )
                         top.linkTo(parent.top)
                     },
-                goToDetail = goToDetail
+                goToDetail = toMovieDetail
             )
             IMDBMovies(
                 title = stringResource(R.string.best_movies),
                 movies = moviePopularList.subList(1, moviePopularList.size),
-                goToDetail = goToDetail,
+                goToDetail = toMovieDetail,
                 modifier = Modifier
                     .constrainAs(popular) {
                         linkTo(
@@ -120,7 +120,7 @@ fun MovieContent(
             IMDBMovies(
                 title = stringResource(R.string.favourites_everyone),
                 movies = movieTopRatedList,
-                goToDetail = goToDetail,
+                goToDetail = toMovieDetail,
                 modifier = Modifier
                     .constrainAs(topRated) {
                         linkTo(

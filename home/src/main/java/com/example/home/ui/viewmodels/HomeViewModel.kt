@@ -174,8 +174,4 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onMovieClicked(movieId: Int) {
-//        repository.insertMovie(movie)
-    }
-
 }

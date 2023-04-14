@@ -39,7 +39,7 @@ class HomeSearchViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _movieList = mutableStateOf<List<Movie>>(emptyList())
-    val movieList: State<List<Movie>> = _movieList
+    private val movieList: State<List<Movie>> = _movieList
     private val _filteredMovieList = MutableLiveData<List<MovieView>>()
     val filteredMovieList: LiveData<List<MovieView>> = _filteredMovieList
     private val _genresDict = mutableNotReplayFlow<Map<Int, String>>()

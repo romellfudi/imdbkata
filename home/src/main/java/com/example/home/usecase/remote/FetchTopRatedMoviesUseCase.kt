@@ -17,9 +17,9 @@ class FetchTopRatedMoviesUseCase @Inject constructor(
                     val movies = it.data.results
                     repository.storeInDatabase(movies, "top_rated")
                     movies.forEach { movie ->
-                        repository.fetchRecommendationsBy(movie).collect {
-                            if (it is IMDBState.Success) {
-                                val recommendedMovies = it.data.results
+                        repository.fetchRecommendationsBy(movie.id).collect { state ->
+                            if (state is IMDBState.Success) {
+                                val recommendedMovies = state.data.results
                                 if (recommendedMovies.isNotEmpty())
                                     repository.updateRecommendedMovies(movie.id,recommendedMovies)
                             }

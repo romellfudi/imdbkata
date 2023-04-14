@@ -13,12 +13,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.core.view.DarkThemeColors
 import com.example.core.view.ThemeColors
 import com.example.home.ui.viewmodels.*
+import com.example.home.ui.views.HomeMovieScreen
 import com.example.home.ui.views.HomeScreen
 import com.example.login.ui.viewmodels.LoginViewModel
 import com.example.login.ui.viewmodels.RegisterViewModel
@@ -43,6 +46,7 @@ class MainActivity : ComponentActivity() {
     private val searchViewModel: HomeSearchViewModel by viewModels()
     private val playerViewModel: HomePlayerViewModel by viewModels()
     private val profileViewModel: HomeProfileViewModel by viewModels()
+    private val homeMovieViewModel: HomeMovieViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +96,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("home") {
                             HomeScreen(
+                                toMovieDetail = {
+                                    navigationController.navigate("detail/$it")
+                                },
                                 backScreen = {
                                     navigationController.navigateAndReplaceStartRoute("login")
                                 },
@@ -102,7 +109,20 @@ class MainActivity : ComponentActivity() {
                                 profileViewModel,
                             )
                         }
-
+                        composable(
+                            route = "detail/{id}",
+                            arguments = listOf(
+                                navArgument("id") {
+                                    type = NavType.IntType
+                                }
+                            ),
+                            content = { backStackEntry ->
+                                HomeMovieScreen(
+                                    viewModel = homeMovieViewModel,
+                                    id = backStackEntry.arguments?.getInt("id") ?: 0
+                                )
+                            }
+                        )
                     }
                 }
             }

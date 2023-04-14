@@ -44,6 +44,7 @@ import com.example.home.ui.viewmodels.*
  */
 @Composable
 fun HomeScreen(
+    toMovieDetail: (Int) -> Unit,
     backScreen: () -> Unit,
     viewModel: HomeViewModel,
     initViewModel: HomeIntViewModel,
@@ -79,6 +80,7 @@ fun HomeScreen(
             searchViewModel = searchViewModel,
             playerViewModel = playerViewModel,
             profileViewModel = profileViewModel,
+            toMovieDetail = toMovieDetail,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = paddingValues.calculateBottomPadding())
@@ -282,6 +284,7 @@ fun OptionsNavHost(
     searchViewModel: HomeSearchViewModel,
     playerViewModel: HomePlayerViewModel,
     profileViewModel: HomeProfileViewModel,
+    toMovieDetail: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -290,13 +293,15 @@ fun OptionsNavHost(
         modifier = modifier
     ) {
         composable(route = TapViewState.Init.route) {
-            HomeInitScreen(initViewModel, viewModel::onMovieClicked)
+            HomeInitScreen(initViewModel,
+                toMovieDetail = toMovieDetail
+            )
         }
         composable(route = TapViewState.Search.route) {
-            HomeSearchScreen(searchViewModel, viewModel::onMovieClicked)
+            HomeSearchScreen(searchViewModel, toMovieDetail)
         }
         composable(route = TapViewState.Play.route) {
-            HomePlayScreen(playerViewModel, viewModel::onMovieClicked)
+            HomePlayScreen(playerViewModel, toMovieDetail)
         }
         composable(route = TapViewState.Profile.route) {
             HomeProfileScreen(profileViewModel, viewModel::signOut)

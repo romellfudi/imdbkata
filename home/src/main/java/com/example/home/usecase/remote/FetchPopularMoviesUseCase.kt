@@ -17,7 +17,7 @@ class FetchPopularMoviesUseCase @Inject constructor(
                     val movies = it.data.results
                     repository.storeInDatabase(movies, "popular")
                     movies.forEach { movie ->
-                        repository.fetchRecommendationsBy(movie).collect {
+                        repository.fetchRecommendationsBy(movie.id).collect {
                             if (it is IMDBState.Success) {
                                 val recommendedMovies = it.data.results
                                 if (recommendedMovies.isNotEmpty())

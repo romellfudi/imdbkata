@@ -13,7 +13,7 @@ import com.example.home.ui.viewmodels.HomePlayerViewModel
 @Composable
 fun HomePlayScreen(
     viewModel: HomePlayerViewModel,
-    goToDetail: (Int) -> Unit,
+    toMovieDetail: (Int) -> Unit,
     isDark: Boolean = isSystemInDarkTheme()
 ) {
 

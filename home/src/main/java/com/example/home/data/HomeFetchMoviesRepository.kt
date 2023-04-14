@@ -42,16 +42,20 @@ class HomeFetchMoviesRepository @Inject constructor(
         moviesDao.getAllMoviesByType(typeRank)
     }
 
-    suspend fun fetchRecommendationsBy(movie: Movie) = withContext(Dispatchers.IO) {
-        api.getRecommendationsBy(movie.id)
-    }
-
     suspend fun updateRecommendedMovies(id: Int, recommendedMovies: List<Movie>) = withContext(Dispatchers.IO)  {
         moviesDao.updateRecommendedMovies(id,recommendedMovies)
     }
 
     suspend fun existDataStored() = withContext(Dispatchers.IO) {
         moviesDao.existDataStored()
+    }
+
+    suspend fun fetchMovieDetail(id: Int) = withContext(Dispatchers.IO) {
+        api.getMovieDetailBy(id)
+    }
+
+    suspend fun fetchRecommendationsBy(id: Int) = withContext(Dispatchers.IO) {
+        api.getRecommendationsBy(id)
     }
 
 }
