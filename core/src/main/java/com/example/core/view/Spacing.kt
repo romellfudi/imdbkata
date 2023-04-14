@@ -11,5 +11,6 @@ val padding_12: Dp = 12.dp
 val padding_15: Dp = 15.dp
 val padding_16: Dp = 16.dp
 val padding_24: Dp = 24.dp
+val padding_32: Dp = 32.dp
 val padding_60: Dp = 60.dp
 

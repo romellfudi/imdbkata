@@ -1,6 +1,5 @@
 package com.example.home.ui.dataview
 
-import com.example.data.models.Movie
 import com.example.data.models.User
 
 
@@ -21,4 +20,9 @@ fun User.toUserView(): UserView {
         email = email,
         photoUrl = photoUrl
     )
+}
+
+// add extend function to check photoUrl is contains null as string
+fun UserView.picAvailable(): Boolean {
+    return photoUrl != "null" && photoUrl.isNotEmpty()
 }

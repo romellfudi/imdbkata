@@ -31,6 +31,7 @@ import com.example.data.models.noteModelList
 import com.example.home.R
 import com.example.home.ui.dataview.MovieView
 import com.example.home.ui.dataview.UserView
+import com.example.home.ui.dataview.picAvailable
 import com.example.home.ui.viewmodels.HomeProfileViewModel
 
 /**
@@ -121,7 +122,10 @@ fun ProfileHeader(userView: UserView?, modifier: Modifier = Modifier) {
             placeholder = painterResource(R.drawable.placeholder),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(
-                    userView?.photoUrl?.ifEmpty { defaultPhoto } ?: defaultPhoto
+                    when(userView?.picAvailable() ) {
+                        true -> userView.photoUrl
+                        else -> defaultPhoto
+                    }
                 )
                 .crossfade(true)
                 .build(),

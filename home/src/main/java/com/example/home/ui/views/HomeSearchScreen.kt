@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -22,13 +23,12 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import coil.compose.rememberAsyncImagePainter
-import com.example.core.view.Color2
-import com.example.core.view.Color3
-import com.example.core.view.Color4
+import com.example.core.view.*
 import com.example.core.view.compose.FailedAnimation
 import com.example.core.view.compose.LoadingAnimation
-import com.example.core.view.getTextFieldColors
 import com.example.home.R
 import com.example.home.helpers.HomeState
 import com.example.home.ui.dataview.MovieView
@@ -47,22 +47,55 @@ fun HomeSearchScreen(
 ) {
 
     val genresDict = viewModel.genresDict.collectAsState(emptyMap())
-    val filteredMovies by viewModel.filteredMovieList.collectAsState(emptyList())
+    val filteredMovies by viewModel.filteredMovieList.observeAsState(emptyList())
     val isLoading = remember { viewModel.isLoading }
     val queryValue: String by viewModel.query.observeAsState(initial = "")
 
     LaunchedEffect("Load Movies") {
-        viewModel.apply {
-            loadLocalDataOrFetch()
-        }
+        viewModel.loadLocalDataOrFetch()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(5.dp)
-    ) {
-        Row(modifier = Modifier.padding(5.dp)) {
+    when (isLoading.value) {
+        is HomeState.Loading -> {
+            LoadingAnimation(modifier = Modifier.fillMaxSize())
+        }
+        is HomeState.Error -> {
+            FailedAnimation(modifier = Modifier.fillMaxSize())
+        }
+        is HomeState.Ready -> {
+            MoviesList(
+                queryValue = queryValue,
+                viewModel = viewModel,
+                movies = filteredMovies,
+                genres = genresDict.value,
+                goToDetail = goToDetail,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+fun MoviesList(
+    queryValue: String,
+    viewModel: HomeSearchViewModel,
+    movies: List<MovieView>,
+    genres: Map<Int, String>,
+    goToDetail: (Int) -> Unit,
+    isDark: Boolean = isSystemInDarkTheme(),
+    modifier: Modifier = Modifier
+) {
+    ConstraintLayout(modifier = modifier) {
+        val state = rememberLazyListState()
+        val (search, listView) = createRefs()
+
+        Row(modifier = Modifier
+            .constrainAs(search) {
+                linkTo(start = parent.start, end = parent.end)
+                top.linkTo(parent.top)
+                width = Dimension.fillToConstraints
+            }
+            .padding(padding_16)) {
             TextField(
                 colors = getTextFieldColors(isDark),
                 singleLine = true,
@@ -75,39 +108,22 @@ fun HomeSearchScreen(
                 leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search Icon") }
             )
         }
-
-        when (isLoading.value) {
-            is HomeState.Loading -> {
-                LoadingAnimation(modifier = Modifier.fillMaxSize())
+        LazyColumn(
+            state = state,
+            modifier = modifier
+                .constrainAs(listView) {
+                    linkTo(start = parent.start, end = parent.end)
+                    top.linkTo(search.bottom, padding_32)
+                    bottom.linkTo(parent.bottom)
+                    width = Dimension.fillToConstraints
+                }
+                .padding(5.dp)
+                .semantics { testTag = "home_screen_list" },
+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
+        ) {
+            items(movies) {
+                MovieCard(movie = it, genres = genres, goToDetail = goToDetail)
             }
-            is HomeState.Error -> {
-                FailedAnimation(modifier = Modifier.fillMaxSize())
-            }
-            is HomeState.Ready -> {
-                MoviesList(
-                    movies = filteredMovies,
-                    genres = genresDict.value,
-                    modifier = Modifier.weight(1f),
-                    goToDetail = goToDetail
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun MoviesList(
-    movies: List<MovieView>,
-    genres: Map<Int, String>,
-    goToDetail: (Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    LazyColumn(
-        modifier = modifier.semantics { testTag = "home_screen_list" },
-        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
-    ) {
-        items(movies) {
-            MovieCard(movie = it, genres = genres, goToDetail = goToDetail)
         }
     }
 }
@@ -159,7 +175,7 @@ fun MovieCard(
                         fontWeight = FontWeight.Bold,
                     )
                 )
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(padding_6))
                 Text(
                     text = movie.genreIds.map { genres[it] }.joinToString(", "),
                     style = TextStyle(

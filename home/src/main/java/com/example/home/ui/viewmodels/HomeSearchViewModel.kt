@@ -40,22 +40,17 @@ class HomeSearchViewModel @Inject constructor(
 
     private val _movieList = mutableStateOf<List<Movie>>(emptyList())
     val movieList: State<List<Movie>> = _movieList
-    private val _filteredMovieList = mutableNotReplayFlow<List<MovieView>>()
-    val filteredMovieList: SharedFlow<List<MovieView>> = _filteredMovieList
+    private val _filteredMovieList = MutableLiveData<List<MovieView>>()
+    val filteredMovieList: LiveData<List<MovieView>> = _filteredMovieList
     private val _genresDict = mutableNotReplayFlow<Map<Int, String>>()
     val genresDict: SharedFlow<Map<Int, String>> = _genresDict
     private val _isLoading = mutableStateOf<HomeState>(HomeState.Loading)
     val isLoading: State<HomeState> = _isLoading
-    private val _shouldGoToLogin = mutableNotReplayFlow<Boolean>()
     private val _query = MutableLiveData<String>()
     val query: LiveData<String> = _query
 
     companion object {
         const val DEBOUNCE_PERIOD = 500L
-    }
-
-    init {
-        search()
     }
 
     fun filterMovies(query: String) {
@@ -64,7 +59,7 @@ class HomeSearchViewModel @Inject constructor(
         }
     }
 
-    private fun search(query: String = "") {
+    fun search(query: String = "") {
         _query.value = query
         viewModelScope.launch(dispatcherProvider.main) {
             _query
@@ -74,17 +69,17 @@ class HomeSearchViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .flatMapLatest { query ->
                     val filtered = if (query.isNotEmpty()) {
-                        movieList.value.filter { it.title.contains(query, ignoreCase = true) }
+                        movieList.value.filter { it.title.contains(query.trim(), ignoreCase = true) }
                     } else {
                         movieList.value
                     }
                     flowOf(filtered.map { it.toMovieView() })
                 }
                 .catch {
-                    _filteredMovieList.tryEmit(emptyList())
+                    _filteredMovieList.value = emptyList()
                 }
                 .collect {
-                    _filteredMovieList.tryEmit(it)
+                    _filteredMovieList.value = it
                 }
         }
     }
@@ -102,12 +97,11 @@ class HomeSearchViewModel @Inject constructor(
                     } else {
                         loadRemoteData()
                     }
-
                 }
         }
     }
 
-    fun loadRemoteData() {
+    private fun loadRemoteData() {
         viewModelScope.launch(dispatcherProvider.io) {
             combine(
                 fetchTopRatedMoviesUseCase(),
@@ -139,7 +133,7 @@ class HomeSearchViewModel @Inject constructor(
                     _isLoading.value = HomeState.Error(it.message ?: "Error")
                 }.collect {
                     _movieList.value = it
-                    filterMovies(query = "")
+                    filterMovies(query = _query.value.orEmpty())
                     _isLoading.value = HomeState.Ready
                 }
         }

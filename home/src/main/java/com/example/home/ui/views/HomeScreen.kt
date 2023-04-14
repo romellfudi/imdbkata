@@ -53,6 +53,11 @@ fun HomeScreen(
 ) {
 
     val backPressDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    val navController = rememberNavController()
+
+    LaunchedEffect("Clear search view") {
+        searchViewModel.search()
+    }
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(Unit) {
@@ -88,7 +93,6 @@ fun HomeScreen(
         }
     }
 
-    val navController = rememberNavController()
     Scaffold(
         bottomBar = { BottomBar(navController = navController) },
         modifier = modifier
