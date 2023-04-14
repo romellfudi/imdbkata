@@ -9,7 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,6 +30,7 @@ import com.example.data.models.NoteModel
 import com.example.data.models.noteModelList
 import com.example.home.R
 import com.example.home.ui.dataview.MovieView
+import com.example.home.ui.dataview.UserView
 import com.example.home.ui.viewmodels.HomeProfileViewModel
 
 /**
@@ -45,6 +45,13 @@ fun HomeProfileScreen(
     isDark: Boolean = isSystemInDarkTheme(),
     modifier: Modifier = Modifier,
 ) {
+
+    val firebaseUser by viewModel.user.collectAsState(null)
+    val isLoading = remember { viewModel.isLoading }
+
+    LaunchedEffect("Load Profile") {
+        viewModel.fetchUser()
+    }
     val state = rememberScrollState()
     ConstraintLayout(
         modifier = modifier
@@ -53,6 +60,7 @@ fun HomeProfileScreen(
     ) {
         val (header, note, followList, recent, favourite, profile) = createRefs()
         ProfileHeader(
+            userView = firebaseUser,
             modifier = Modifier.constrainAs(header) {
                 linkTo(start = parent.start, end = parent.end)
                 top.linkTo(parent.top)
@@ -104,15 +112,19 @@ fun HomeProfileScreen(
 }
 
 @Composable
-fun ProfileHeader(modifier: Modifier = Modifier) {
+fun ProfileHeader(userView: UserView?, modifier: Modifier = Modifier) {
     ConstraintLayout(modifier = modifier) {
+        val defaultPhoto = stringResource(R.string.default_profile_url)
+        val defaultName = stringResource(R.string.default_profile)
         val (profileImage, profileName, settingsIcon, divider) = createRefs()
         AsyncImage(
+            placeholder = painterResource(R.drawable.placeholder),
             model = ImageRequest.Builder(LocalContext.current)
-                .data(stringResource(R.string.default_profile_url))
+                .data(
+                    userView?.photoUrl?.ifEmpty { defaultPhoto } ?: defaultPhoto
+                )
                 .crossfade(true)
                 .build(),
-            placeholder = painterResource(R.drawable.placeholder),
             contentDescription = "movie poster",
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
@@ -124,7 +136,7 @@ fun ProfileHeader(modifier: Modifier = Modifier) {
                 }
         )
         Text(
-            text = stringResource(R.string.default_profile),
+            text = userView?.name?.ifEmpty{ defaultName} ?: defaultName,
             fontWeight = FontWeight.Medium,
             fontSize = 16.sp,
             overflow = TextOverflow.Ellipsis,
@@ -170,7 +182,7 @@ fun ProfileHeader(modifier: Modifier = Modifier) {
 @Composable
 fun NoteListView(modifier: Modifier = Modifier) {
     ConstraintLayout(modifier = modifier) {
-        val noteModelList =  noteModelList
+        val noteModelList = noteModelList
         val state = rememberLazyListState()
         val (rv) = createRefs()
         LazyRow(
@@ -289,7 +301,7 @@ fun FollowList(
     modifier: Modifier
 ) {
     ConstraintLayout(modifier = modifier) {
-        val (separator, followTitle,followEmptyText, followEmptyButton) = createRefs()
+        val (separator, followTitle, followEmptyText, followEmptyButton) = createRefs()
         Divider(
             modifier = Modifier
                 .background(SeparatorColor)

@@ -1,4 +1,4 @@
-package com.example.home.usecase
+package com.example.home.usecase.firebase
 
 import com.example.home.data.HomeSignOutRepository
 import kotlinx.coroutines.flow.flow

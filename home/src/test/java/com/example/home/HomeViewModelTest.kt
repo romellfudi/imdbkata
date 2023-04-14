@@ -5,6 +5,7 @@ import com.example.data.models.Genre
 import com.example.data.models.Movie
 import com.example.home.ui.viewmodels.HomeViewModel
 import com.example.home.usecase.*
+import com.example.home.usecase.firebase.SignOutUseCase
 import com.example.home.usecase.local.GetGenresUseCase
 import com.example.home.usecase.local.GetPopularMoviesUseCase
 import com.example.home.usecase.local.GetTopRatedMoviesUseCase

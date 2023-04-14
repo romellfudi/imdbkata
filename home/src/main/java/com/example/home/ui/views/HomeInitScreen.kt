@@ -53,9 +53,7 @@ fun HomeInitScreen(
     val isLoading = remember { viewModel.isLoading }
 
     LaunchedEffect("Load Movies") {
-        viewModel.apply {
-            loadLocalDataOrFetch()
-        }
+        viewModel.loadLocalDataOrFetch()
     }
 
     when (isLoading.value) {
