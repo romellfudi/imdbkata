@@ -1,4 +1,22 @@
 <resources>
     <string name="app_name">IMDBKATA</string>
     <string name="search_movies">Buscar pelicula</string>
+    <string name="following">Siguiendo</string>
+    <string name="creation_list">Crear una lista de seguimiento para no perderte ninguna película o serie de tv.</string>
+    <string name="best_movies">Las mejores selecciones</string>
+    <string name="favourites_everyone">Favoritos de los aficionados</string>
+    <string name="official_trailer">Trailer Oficial</string>
+    <string name="default_profile">Juan Perez</string>
+    <string name="logo">Logo</string>
+    <string name="recentViewed">Vistas recientes</string>
+    <string name="had_not_seen_recently">No has visitado ninguna página recientemente.</string>
+    <string name="favourite_actors">Personas favoritas</string>
+    <string name="add_actors_movies">Añadir actores y directores favoritos y más para conocer las últimas novedades.</string>
+    <string name="add_favourite_actors">Agregar personas favoritas</string>
+    <string name="log_out">Cerrar sesión</string>
+    <string name="start_marking_list">Empieza tu lista de seguimiento</string>
+    <string name="home">Inicio</string>
+    <string name="search">Buscar</string>
+    <string name="play">Play</string>
+    <string name="profile">Perfil</string>
 </resources>

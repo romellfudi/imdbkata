@@ -1,12 +1,10 @@
 package com.example.core.view
 
-import androidx.compose.material.TextFieldColors
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.dp
 import com.example.core.R
 
 /**
@@ -35,3 +33,13 @@ fun getTextFieldColors(isDarkMode: Boolean): TextFieldColors {
         disabledLabelColor = if (isDarkMode) Color5 else Color4
     )
 }
+
+val buttonNoElevation: ButtonElevation
+    @Composable
+    get() = ButtonDefaults.elevation(
+        defaultElevation = 0.dp,
+        pressedElevation = 0.dp,
+        disabledElevation = 0.dp,
+        hoveredElevation = 0.dp,
+        focusedElevation = 0.dp
+    )

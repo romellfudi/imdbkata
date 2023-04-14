@@ -9,7 +9,6 @@ import com.example.data.models.Movie
 import com.example.home.helpers.HomeState
 import com.example.home.ui.dataview.MovieView
 import com.example.home.ui.dataview.toMovieView
-import com.example.home.usecase.*
 import com.example.home.usecase.local.ExistLocalDataUseCase
 import com.example.home.usecase.local.GetGenresUseCase
 import com.example.home.usecase.local.GetPopularMoviesUseCase
@@ -36,7 +35,6 @@ class HomeSearchViewModel @Inject constructor(
     private val getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
     private val getGenresUseCase: GetGenresUseCase,
-    private val signOutUseCase: SignOutUseCase,
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
@@ -49,7 +47,6 @@ class HomeSearchViewModel @Inject constructor(
     private val _isLoading = mutableStateOf<HomeState>(HomeState.Loading)
     val isLoading: State<HomeState> = _isLoading
     private val _shouldGoToLogin = mutableNotReplayFlow<Boolean>()
-    val shouldGoToLogin: SharedFlow<Boolean> = _shouldGoToLogin
     private val _query = MutableLiveData<String>()
     val query: LiveData<String> = _query
 
@@ -159,23 +156,6 @@ class HomeSearchViewModel @Inject constructor(
                     }
                 }
         }
-    }
-
-    fun signOut() {
-        viewModelScope.launch(dispatcherProvider.main) {
-            signOutUseCase()
-                .flowOn(dispatcherProvider.main)
-                .catch {
-                    _shouldGoToLogin.tryEmit(false)
-                }
-                .collect {
-                    _shouldGoToLogin.tryEmit(it)
-                }
-        }
-    }
-
-    fun onMovieClicked(movie: Movie) {
-//        repository.insertMovie(movie)
     }
 
 }

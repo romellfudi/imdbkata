@@ -5,7 +5,6 @@ import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,8 +17,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
@@ -34,6 +33,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.core.view.*
+import com.example.home.R
 import com.example.home.ui.viewmodels.*
 
 /**
@@ -93,8 +93,9 @@ fun HomeScreen(
         bottomBar = { BottomBar(navController = navController) },
         modifier = modifier
     ) { paddingValues ->
-        BottomNavGraph(
+        OptionsNavHost(
             navController = navController,
+            viewModel = viewModel,
             initViewModel = initViewModel,
             searchViewModel = searchViewModel,
             playerViewModel = playerViewModel,
@@ -121,19 +122,19 @@ fun BottomBar(
             .background(Color1)
             .fillMaxWidth()
     ) {
-        val (movie, search, ticket, profile,b) = createRefs()
+        val (movie, search, player, profile, b) = createRefs()
         TabView(
             screen = TapViewState.Init,
             currentDestination = currentDestination,
             navController = navController,
             modifier = Modifier
                 .constrainAs(movie) {
-                    start.linkTo(parent.start, spacing_10)
+                    start.linkTo(parent.start, no_padding)
                     end.linkTo(search.start)
                     linkTo(
                         top = parent.top,
-                        topMargin = spacing_15,
-                        bottomMargin = spacing_15,
+                        topMargin = padding_15,
+                        bottomMargin = padding_15,
                         bottom = parent.bottom
                     )
                 }
@@ -143,12 +144,12 @@ fun BottomBar(
             currentDestination = currentDestination,
             navController = navController,
             modifier = Modifier.constrainAs(search) {
-                start.linkTo(movie.end, spacing_10)
-                end.linkTo(ticket.start)
+                start.linkTo(movie.end, no_padding)
+                end.linkTo(player.start)
                 linkTo(
                     top = parent.top,
-                    topMargin = spacing_15,
-                    bottomMargin = spacing_15,
+                    topMargin = padding_15,
+                    bottomMargin = padding_15,
                     bottom = parent.bottom
                 )
             }
@@ -157,13 +158,13 @@ fun BottomBar(
             screen = TapViewState.Play,
             currentDestination = currentDestination,
             navController = navController,
-            modifier = Modifier.constrainAs(ticket) {
-                start.linkTo(search.end, spacing_10)
+            modifier = Modifier.constrainAs(player) {
+                start.linkTo(search.end, no_padding)
                 end.linkTo(profile.start)
                 linkTo(
                     top = parent.top,
-                    topMargin = spacing_15,
-                    bottomMargin = spacing_15,
+                    topMargin = padding_15,
+                    bottomMargin = padding_15,
                     bottom = parent.bottom
                 )
             }
@@ -173,12 +174,12 @@ fun BottomBar(
             currentDestination = currentDestination,
             navController = navController,
             modifier = Modifier.constrainAs(profile) {
-                start.linkTo(ticket.end)
-                end.linkTo(parent.end, spacing_10)
+                start.linkTo(player.end)
+                end.linkTo(parent.end, no_padding)
                 linkTo(
                     top = parent.top,
-                    topMargin = spacing_15,
-                    bottomMargin = spacing_15,
+                    topMargin = padding_15,
+                    bottomMargin = padding_15,
                     bottom = parent.bottom
                 )
             }
@@ -195,18 +196,17 @@ fun TabView(
 ) {
     val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
 
-    val contentColor =
-        if (selected) Color.Black else Color.Black.copy(alpha = 0.3f)
+    val contentColor = if (selected) Color2 else Color2.copy(alpha = 0.3f)
 
     ConstraintLayout(
         modifier = modifier
-            .height(spacing_12)
+            .height(padding_60)
             .clip(CircleShape)
             .padding(
-                start = spacing_10,
-                end = spacing_10,
-                top = spacing_10,
-                bottom = spacing_10
+                start = no_padding,
+                end = no_padding,
+                top = no_padding,
+                bottom = no_padding
             )
             .clickable(onClick = {
                 navController.navigate(screen.route) {
@@ -242,7 +242,12 @@ fun TabView(
             }
         ) {
             Text(
-                text = screen.title,
+                text = when (screen) {
+                    TapViewState.Init -> stringResource(R.string.home)
+                    TapViewState.Search -> stringResource(R.string.search)
+                    TapViewState.Play -> stringResource(R.string.play)
+                    TapViewState.Profile -> stringResource(R.string.profile)
+                },
                 color = contentColor
             )
         }
@@ -250,8 +255,9 @@ fun TabView(
 }
 
 @Composable
-fun BottomNavGraph(
+fun OptionsNavHost(
     navController: NavHostController,
+    viewModel: HomeViewModel,
     initViewModel: HomeIntViewModel,
     searchViewModel: HomeSearchViewModel,
     playerViewModel: HomePlayerViewModel,
@@ -264,17 +270,16 @@ fun BottomNavGraph(
         modifier = modifier
     ) {
         composable(route = TapViewState.Init.route) {
-            HomeInitScreen(viewModel = initViewModel)
+            HomeInitScreen(initViewModel, viewModel::onMovieClicked)
         }
         composable(route = TapViewState.Search.route) {
-            HomeSearchScreen(viewModel = searchViewModel)
+            HomeSearchScreen(searchViewModel, viewModel::onMovieClicked)
         }
-
         composable(route = TapViewState.Play.route) {
-            HomePlayScreen(viewModel = playerViewModel)
+            HomePlayScreen(playerViewModel, viewModel::onMovieClicked)
         }
         composable(route = TapViewState.Profile.route) {
-            HomeProfileScreen(viewModel = profileViewModel)
+            HomeProfileScreen(profileViewModel, viewModel::signOut)
         }
     }
 }

@@ -1,4 +1,23 @@
 <resources>
     <string name="app_name">IMDBKATA</string>
     <string name="search_movies">Search movies</string>
+    <string name="default_profile_url" translatable="false">https://avatars.githubusercontent.com/u/1668017?v=4</string>
+    <string name="following">Following</string>
+    <string name="creation_list">Create a tracking list so you don\'t miss any movie or tv series.</string>
+    <string name="best_movies">The best collections</string>
+    <string name="favourites_everyone">Fans\' favourites</string>
+    <string name="official_trailer">Official Trailer</string>
+    <string name="default_profile">James Smith</string>
+    <string name="logo">Logo</string>
+    <string name="recentViewed">Recent Viewed</string>
+    <string name="had_not_seen_recently">You haven\'t seen anything recently</string>
+    <string name="favourite_actors">Favourite Actors</string>
+    <string name="add_actors_movies">Add your favourite actors to see their movies</string>
+    <string name="add_favourite_actors">Add favourite actors</string>
+    <string name="log_out">Log out</string>
+    <string name="start_marking_list">Start marking your list</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="play">Play</string>
+    <string name="profile">Profile</string>
 </resources>

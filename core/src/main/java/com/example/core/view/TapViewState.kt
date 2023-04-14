@@ -9,31 +9,26 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class TapViewState(
     val route: String,
-    val title: String,
     val icon: ImageVector
 ) {
 
     object Init : TapViewState(
         route = "init",
-        title = "Inicio",
         icon = Icons.Filled.Home
     )
 
     object Search : TapViewState(
         route = "search",
-        title = "Buscar",
         icon = Icons.Filled.Search
     )
 
     object Play : TapViewState(
         route = "play",
-        title = "Play",
         icon = Icons.Filled.PlayCircle
     )
 
     object Profile : TapViewState(
         route = "profile",
-        title = "Perfil",
         icon = Icons.Filled.AccountCircle
     )
 }

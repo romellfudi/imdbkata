@@ -9,7 +9,7 @@ import com.example.data.models.Movie
 import com.example.home.helpers.HomeState
 import com.example.home.ui.dataview.MovieView
 import com.example.home.ui.dataview.toMovieView
-import com.example.home.usecase.*
+import com.example.home.usecase.SignOutUseCase
 import com.example.home.usecase.local.ExistLocalDataUseCase
 import com.example.home.usecase.local.GetGenresUseCase
 import com.example.home.usecase.local.GetPopularMoviesUseCase
@@ -174,7 +174,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onMovieClicked(movie: Movie) {
+    fun onMovieClicked(movieId: Int) {
 //        repository.insertMovie(movie)
     }
 

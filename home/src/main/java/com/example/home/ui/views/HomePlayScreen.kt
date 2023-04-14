@@ -4,7 +4,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import com.example.home.ui.viewmodels.HomePlayerViewModel
-import com.example.home.ui.viewmodels.HomeViewModel
 
 /**
  * @author @romellfudi
@@ -14,6 +13,7 @@ import com.example.home.ui.viewmodels.HomeViewModel
 @Composable
 fun HomePlayScreen(
     viewModel: HomePlayerViewModel,
+    goToDetail: (Int) -> Unit,
     isDark: Boolean = isSystemInDarkTheme()
 ) {
 

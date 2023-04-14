@@ -12,3 +12,5 @@ val Color3 = Color(0xFF9D9C9C)
 val Color4 = Color(0xFF4B4747)
 // White
 val Color5 = Color(0xFFF5F5F5)
+// Light Gray
+val SeparatorColor = Color(0xFFD8D8D8)
