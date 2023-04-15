@@ -1,7 +1,7 @@
 package com.example.home.ui.dataview
 
-import com.example.data.models.Movie
-
+import com.example.data.models.CastModel
+import com.example.data.models.MovieDetailResponse
 
 /**
  * @author @romellfudi
@@ -9,19 +9,7 @@ import com.example.data.models.Movie
  * @version 1.0.a
  */
 data class MovieDetailView(
-    val adult: Boolean,
-    val backdropPath: String?,
-    val genreIds: List<Int>,
-    val id: Int,
-    val originalLanguage: String,
-    val originalTitle: String,
-    val overview: String,
-    val popularity: Double,
-    val posterPath: String,
-    val releaseDate: String,
-    val title: String,
-    val video: Boolean,
-    val voteAverage: Double,
-    val voteCount: Int,
-    val posterUrl: String
+    val detail: MovieDetailResponse,
+    val cast: List<CastModel>,
+    val recommendation: List<MovieView>
 )

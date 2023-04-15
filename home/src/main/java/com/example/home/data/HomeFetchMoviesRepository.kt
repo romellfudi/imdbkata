@@ -58,4 +58,8 @@ class HomeFetchMoviesRepository @Inject constructor(
         api.getRecommendationsBy(id)
     }
 
+    suspend fun fetchCreditsBy(id: Int) = withContext(Dispatchers.IO) {
+        api.getCreditsBy(id)
+    }
+
 }

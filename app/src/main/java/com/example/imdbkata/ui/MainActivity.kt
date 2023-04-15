@@ -118,6 +118,9 @@ class MainActivity : ComponentActivity() {
                             ),
                             content = { backStackEntry ->
                                 HomeMovieScreen(
+                                    backScreen = {
+                                        navigationController.popBackStack()
+                                    },
                                     viewModel = homeMovieViewModel,
                                     id = backStackEntry.arguments?.getInt("id") ?: 0
                                 )

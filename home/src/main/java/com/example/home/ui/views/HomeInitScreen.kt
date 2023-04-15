@@ -154,7 +154,7 @@ fun MostPopular(
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(movieView.posterUrl)
+                .data(movieView.tileUrl)
                 .crossfade(true)
                 .build(),
             placeholder = painterResource(R.drawable.placeholder),

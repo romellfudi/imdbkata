@@ -20,4 +20,7 @@
     <string name="search">Search</string>
     <string name="play">Play</string>
     <string name="profile">Profile</string>
+    <string name="movie_title_default">Movie Title</string>
+    <string name="add_to_my_list">Add to my list</string>
+    <string name="recommendations">Recommendations</string>
 </resources>

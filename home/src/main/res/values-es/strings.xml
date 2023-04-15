@@ -19,4 +19,7 @@
     <string name="search">Buscar</string>
     <string name="play">Play</string>
     <string name="profile">Perfil</string>
+    <string name="movie_title_default">Titulo de la pelicula</string>
+    <string name="add_to_my_list">Agregar a mi lista de seguimiento</string>
+    <string name="recommendations">Recomendaciones</string>
 </resources>

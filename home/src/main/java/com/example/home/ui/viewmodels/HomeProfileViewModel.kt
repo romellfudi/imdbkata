@@ -6,9 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.di.DispatcherProvider
 import com.example.core.tool.mutableNotReplayFlow
-import com.example.data.models.Movie
 import com.example.home.helpers.HomeState
-import com.example.home.ui.dataview.MovieView
 import com.example.home.ui.dataview.UserView
 import com.example.home.ui.dataview.toUserView
 import com.example.home.usecase.firebase.GetFirebaseUserUseCase

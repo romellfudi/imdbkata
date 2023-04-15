@@ -55,7 +55,19 @@ data class MovieDetailResponse(
     val voteAverage: Double,
     @Json(name = "vote_count")
     val voteCount: Int
-)
+) {
+    val posterUrl: String
+        get() = if (posterPath.isNullOrEmpty())
+            "https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg"
+        else
+            "https://image.tmdb.org/t/p/w500$posterPath"
+
+    val tileUrl: String
+        get() = if (backdropPath.isNullOrEmpty())
+            "https://www.electiondataservices.com/wp-content/uploads/2014/10/sorry-image-not-available.jpg"
+        else
+            "https://image.tmdb.org/t/p/w500$backdropPath"
+}
 
 @JsonClass(generateAdapter = true)
 data class MovieCollection(
