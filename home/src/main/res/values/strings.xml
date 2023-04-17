@@ -7,7 +7,7 @@
     <string name="best_movies">The best collections</string>
     <string name="favourites_everyone">Fans\' favourites</string>
     <string name="official_trailer">Official Trailer</string>
-    <string name="default_profile">James Smith</string>
+    <string name="default_profile">Guest(Brendan Fraser)</string>
     <string name="logo">Logo</string>
     <string name="recentViewed">Recent Viewed</string>
     <string name="had_not_seen_recently">You haven\'t seen anything recently</string>
@@ -23,4 +23,7 @@
     <string name="movie_title_default">Movie Title</string>
     <string name="add_to_my_list">Add to my list</string>
     <string name="recommendations">Recommendations</string>
+    <string name="id">ID: </string>
+    <string name="original_title"> (original title)</string>
+    <string name="cast">Cast</string>
 </resources>

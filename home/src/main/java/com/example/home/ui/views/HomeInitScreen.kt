@@ -253,14 +253,14 @@ fun IMDBMovies(
             }
             .fillMaxWidth()
         ) {
-            val (bullet, titleRef) = createRefs()
+            val (colorLine, movieTitle) = createRefs()
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
                     .background(Color1)
-                    .constrainAs(bullet) {
+                    .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)
                     }
@@ -272,15 +272,15 @@ fun IMDBMovies(
                 color = Color.Black,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier.constrainAs(titleRef) {
+                modifier = Modifier.constrainAs(movieTitle) {
                     linkTo(
-                        start = bullet.end,
+                        start = colorLine.end,
                         startMargin = padding_12,
                         end = parent.end,
                         endMargin = padding_24
                     )
-                    top.linkTo(bullet.top)
-                    bottom.linkTo(bullet.bottom)
+                    top.linkTo(colorLine.top)
+                    bottom.linkTo(colorLine.bottom)
                     width = Dimension.fillToConstraints
                 }
             )

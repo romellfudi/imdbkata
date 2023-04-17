@@ -6,7 +6,7 @@
     <string name="best_movies">Las mejores selecciones</string>
     <string name="favourites_everyone">Favoritos de los aficionados</string>
     <string name="official_trailer">Trailer Oficial</string>
-    <string name="default_profile">Juan Perez</string>
+    <string name="default_profile">Invitado(Brendan Fraser)</string>
     <string name="logo">Logo</string>
     <string name="recentViewed">Vistas recientes</string>
     <string name="had_not_seen_recently">No has visitado ninguna página recientemente.</string>
@@ -22,4 +22,7 @@
     <string name="movie_title_default">Titulo de la pelicula</string>
     <string name="add_to_my_list">Agregar a mi lista de seguimiento</string>
     <string name="recommendations">Recomendaciones</string>
+    <string name="id">ID: </string>
+    <string name="original_title"> (titulo original)</string>
+    <string name="cast">Reparto</string>
 </resources>

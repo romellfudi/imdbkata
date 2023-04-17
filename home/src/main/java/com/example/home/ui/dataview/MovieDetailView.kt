@@ -1,6 +1,6 @@
 package com.example.home.ui.dataview
 
-import com.example.data.models.CastModel
+import com.example.data.models.CastView
 import com.example.data.models.MovieDetailResponse
 
 /**
@@ -10,6 +10,6 @@ import com.example.data.models.MovieDetailResponse
  */
 data class MovieDetailView(
     val detail: MovieDetailResponse,
-    val cast: List<CastModel>,
+    val cast: List<CastView>,
     val recommendation: List<MovieView>
 )

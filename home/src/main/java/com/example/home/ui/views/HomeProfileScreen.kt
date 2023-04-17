@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,12 +27,12 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.core.view.*
-import com.example.data.models.NoteModel
-import com.example.data.models.noteModelList
+import com.example.data.models.CastView
+import com.example.data.models.NoteView
+import com.example.data.models.castViewList
+import com.example.data.models.noteViewMockList
 import com.example.home.R
-import com.example.home.ui.dataview.MovieView
-import com.example.home.ui.dataview.UserView
-import com.example.home.ui.dataview.picAvailable
+import com.example.home.ui.dataview.*
 import com.example.home.ui.viewmodels.HomeProfileViewModel
 
 /**
@@ -42,13 +43,23 @@ import com.example.home.ui.viewmodels.HomeProfileViewModel
 @Composable
 fun HomeProfileScreen(
     viewModel: HomeProfileViewModel,
-    onSignOut: () -> Unit,
+    onLogout: () -> Unit,
     isDark: Boolean = isSystemInDarkTheme(),
     modifier: Modifier = Modifier,
 ) {
 
     val firebaseUser by viewModel.user.collectAsState(null)
     val isLoading = remember { viewModel.isLoading }
+    val noteViewList = noteViewMockList
+    val followMovieList =
+//        listOf<MovieView>()
+        movieViewFList
+    val recentViewedMovieList =
+//        listOf<MovieView>()
+        movieViewRVList
+    val favouriteCastMovieList =
+//        listOf<CastView>()
+        castViewList
 
     LaunchedEffect("Load Profile") {
         viewModel.fetchUser()
@@ -59,7 +70,7 @@ fun HomeProfileScreen(
             .fillMaxSize()
             .verticalScroll(state)
     ) {
-        val (header, note, followList, recent, favourite, profile) = createRefs()
+        val (header, note, followList, recentList, favList, profile) = createRefs()
         ProfileHeader(
             userView = firebaseUser,
             modifier = Modifier.constrainAs(header) {
@@ -69,6 +80,7 @@ fun HomeProfileScreen(
             }
         )
         NoteListView(
+            noteViewList,
             modifier = Modifier.constrainAs(note) {
                 linkTo(start = parent.start, end = parent.end)
                 top.linkTo(header.bottom)
@@ -76,33 +88,37 @@ fun HomeProfileScreen(
             }
         )
         FollowList(
-            listOf(),
+            followList = followMovieList,
             modifier = Modifier.constrainAs(followList) {
                 linkTo(start = parent.start, end = parent.end)
                 top.linkTo(note.bottom)
+                height = Dimension.wrapContent
                 width = Dimension.fillToConstraints
             }
         )
         MoviesRecentViewed(
-            listOf(),
-            modifier = Modifier.constrainAs(recent) {
+            recentViewedMovieList,
+            modifier = Modifier.constrainAs(recentList) {
                 linkTo(start = parent.start, end = parent.end)
                 top.linkTo(followList.bottom)
                 width = Dimension.fillToConstraints
+                height = Dimension.wrapContent
             }
         )
         FavouritePeople(
-            modifier = Modifier.constrainAs(favourite) {
+            favouriteCastMovieList,
+            modifier = Modifier.constrainAs(favList) {
                 linkTo(start = parent.start, end = parent.end)
-                top.linkTo(recent.bottom)
+                top.linkTo(recentList.bottom)
                 width = Dimension.fillToConstraints
+                height = Dimension.wrapContent
             }
         )
-        ProfileOptions(
-            signOut = { onSignOut() },
+        ProfileLogoutOptions(
+            logout = { onLogout() },
             modifier = Modifier.constrainAs(profile) {
                 linkTo(start = parent.start, end = parent.end)
-                top.linkTo(favourite.bottom)
+                top.linkTo(favList.bottom)
                 bottom.linkTo(parent.bottom)
                 height = Dimension.wrapContent
                 width = Dimension.fillToConstraints
@@ -141,7 +157,7 @@ fun ProfileHeader(userView: UserView?, modifier: Modifier = Modifier) {
         )
         Text(
             text = userView?.name?.ifEmpty{ defaultName} ?: defaultName,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
@@ -184,9 +200,10 @@ fun ProfileHeader(userView: UserView?, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun NoteListView(modifier: Modifier = Modifier) {
+fun NoteListView(
+    noteViewList: List<NoteView>,
+    modifier: Modifier = Modifier) {
     ConstraintLayout(modifier = modifier) {
-        val noteModelList = noteModelList
         val state = rememberLazyListState()
         val (rv) = createRefs()
         LazyRow(
@@ -202,8 +219,8 @@ fun NoteListView(modifier: Modifier = Modifier) {
                 width = Dimension.fillToConstraints
             }
         ) {
-            items(noteModelList) { noteModel ->
-                NoteViewItem(noteModel)
+            items(noteViewList) { noteView ->
+                NoteViewItem(noteView)
             }
         }
     }
@@ -211,7 +228,7 @@ fun NoteListView(modifier: Modifier = Modifier) {
 
 @Composable
 fun NoteViewItem(
-    noteModel: NoteModel,
+    noteView: NoteView,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -239,7 +256,7 @@ fun NoteViewItem(
                     }
             )
             Text(
-                text = noteModel.comment,
+                text = noteView.comment,
                 fontSize = 10.sp,
                 color = Color.Black,
                 overflow = TextOverflow.Ellipsis,
@@ -261,7 +278,7 @@ fun NoteViewItem(
                 }
             )
             Text(
-                text = noteModel.title,
+                text = noteView.title,
                 fontSize = 10.sp,
                 color = Color.Black,
                 maxLines = 1,
@@ -278,7 +295,7 @@ fun NoteViewItem(
                 }
             )
             Text(
-                text = noteModel.count.toString(),
+                text = noteView.count.toString(),
                 fontSize = 10.sp,
                 color = Color3,
                 maxLines = 1,
@@ -314,7 +331,6 @@ fun FollowList(
                     top.linkTo(parent.top)
                 }
         )
-        // title 1
         ConstraintLayout(modifier = Modifier
             .constrainAs(followTitle) {
                 start.linkTo(parent.start)
@@ -322,14 +338,14 @@ fun FollowList(
                 top.linkTo(separator.bottom)
             }
             .fillMaxWidth()) {
-            val (bullet, titleRef) = createRefs()
+            val (colorLine, movieTitle) = createRefs()
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
                     .background(Color1)
-                    .constrainAs(bullet) {
+                    .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)
                     }
@@ -340,16 +356,16 @@ fun FollowList(
                 overflow = TextOverflow.Ellipsis,
                 color = Color.Black,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.constrainAs(titleRef) {
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.constrainAs(movieTitle) {
                     linkTo(
-                        start = bullet.end,
+                        start = colorLine.end,
                         startMargin = padding_12,
                         end = parent.end,
                         endMargin = padding_24
                     )
-                    top.linkTo(bullet.top)
-                    bottom.linkTo(bullet.bottom)
+                    top.linkTo(colorLine.top)
+                    bottom.linkTo(colorLine.bottom)
                     width = Dimension.fillToConstraints
                 }
             )
@@ -367,44 +383,19 @@ fun FollowList(
                     width = Dimension.fillToConstraints
                 }
             )
-//            Button(
-//                onClick = {
-//
-//                },
-//                elevation = buttonNoElevation,
-//                colors = ButtonDefaults.buttonColors(
-//                    backgroundColor = Color.Transparent,
-//                    disabledBackgroundColor = Color.Transparent
-//                ),
-//                modifier = Modifier
-//                    .constrainAs(followEmptyButton) {
-//                        linkTo(
-//                            start = parent.start,
-//                            startMargin = padding_8,
-//                            end = parent.end,
-//                            endMargin = padding_8
-//                        )
-//                        top.linkTo(followEmptyText.bottom, padding_24)
-//                        bottom.linkTo(parent.bottom, padding_24)
-//                        width = Dimension.fillToConstraints
-//                    }
-//            ) {
-//                Text(
-//                    text = stringResource(R.string.start_marking_list),
-//                    textAlign = TextAlign.Center,
-//                    fontSize = 18.sp,
-//                    color = Color.White,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .background(
-//                            color = Color1,
-//                            shape = MaterialTheme.shapes.medium
-//                        )
-//                        .padding(
-//                            vertical = padding_16
-//                        )
-//                )
-//            }
+        } else {
+            IMDBProfileMovies(
+                movies = followList,
+                goToDetail = {},
+                modifier = Modifier
+                    .constrainAs(followEmptyText) {
+                        start.linkTo(parent.start, padding_8)
+                        end.linkTo(parent.end, padding_8)
+                        top.linkTo(followTitle.bottom, padding_4)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
+            )
         }
     }
 }
@@ -419,12 +410,11 @@ fun MoviesRecentViewed(
         Divider(
             modifier = Modifier
                 .background(SeparatorColor)
-                .height(12.dp)
+                .height(padding_12)
                 .constrainAs(recent) {
                     top.linkTo(parent.top)
                 }
         )
-        // title 2
         ConstraintLayout(modifier = Modifier
             .constrainAs(recentViewedTitle) {
                 start.linkTo(parent.start)
@@ -432,14 +422,14 @@ fun MoviesRecentViewed(
                 top.linkTo(recent.bottom)
             }
             .fillMaxWidth()) {
-            val (bullet, titleRef) = createRefs()
+            val (colorLine, movieTitle) = createRefs()
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
                     .background(Color1)
-                    .constrainAs(bullet) {
+                    .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)
                     }
@@ -450,16 +440,16 @@ fun MoviesRecentViewed(
                 overflow = TextOverflow.Ellipsis,
                 color = Color.Black,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.constrainAs(titleRef) {
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.constrainAs(movieTitle) {
                     linkTo(
-                        start = bullet.end,
+                        start = colorLine.end,
                         startMargin = padding_12,
                         end = parent.end,
                         endMargin = padding_24
                     )
-                    top.linkTo(bullet.top)
-                    bottom.linkTo(bullet.bottom)
+                    top.linkTo(colorLine.top)
+                    bottom.linkTo(colorLine.bottom)
                     width = Dimension.fillToConstraints
                 }
             )
@@ -478,6 +468,19 @@ fun MoviesRecentViewed(
                     width = Dimension.fillToConstraints
                 }
             )
+        } else {
+            IMDBProfileMovies(
+                movies = recentViewedList,
+                goToDetail = {},
+                modifier = Modifier
+                    .constrainAs(viewText) {
+                        start.linkTo(parent.start, padding_8)
+                        end.linkTo(parent.end, padding_8)
+                        top.linkTo(recentViewedTitle.bottom, padding_4)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
+            )
         }
     }
 }
@@ -485,6 +488,7 @@ fun MoviesRecentViewed(
 
 @Composable
 fun FavouritePeople(
+    castList: List<CastView>,
     modifier: Modifier
 ) {
     ConstraintLayout(modifier = modifier) {
@@ -497,7 +501,6 @@ fun FavouritePeople(
                     top.linkTo(parent.top)
                 }
         )
-        // title 3
         ConstraintLayout(modifier = modifier
             .constrainAs(followTitle) {
                 start.linkTo(parent.start)
@@ -505,14 +508,14 @@ fun FavouritePeople(
                 top.linkTo(separator.bottom)
             }
             .fillMaxWidth()) {
-            val (bullet, titleRef, bodyRef, buttonRef) = createRefs()
+            val (colorLine, movieTitle, bodyRef, buttonRef) = createRefs()
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
                     .background(Color1)
-                    .constrainAs(bullet) {
+                    .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)
                     }
@@ -523,85 +526,133 @@ fun FavouritePeople(
                 overflow = TextOverflow.Ellipsis,
                 color = Color.Black,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.constrainAs(titleRef) {
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.constrainAs(movieTitle) {
                     linkTo(
-                        start = bullet.end,
+                        start = colorLine.end,
                         startMargin = padding_12,
                         end = parent.end,
                         endMargin = padding_24
                     )
-                    top.linkTo(bullet.top)
-                    bottom.linkTo(bullet.bottom)
+                    top.linkTo(colorLine.top)
+                    bottom.linkTo(colorLine.bottom)
                     width = Dimension.fillToConstraints
                 }
             )
+            if (castList.isEmpty()){
+                Text(
+                    text = stringResource(R.string.add_actors_movies),
+                    fontSize = 14.sp,
+                    color = Color2,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.constrainAs(bodyRef) {
+                        start.linkTo(parent.start, padding_24)
+                        end.linkTo(parent.end, padding_24)
+                        top.linkTo(movieTitle.bottom)
+                        width = Dimension.fillToConstraints
+                    }
+                )
+            Button(
+                onClick = {
 
-            Text(
-                text = stringResource(R.string.add_actors_movies),
-                fontSize = 14.sp,
-                color = Color.Black,
-                fontWeight = FontWeight.Normal,
-                modifier = Modifier.constrainAs(bodyRef) {
-                    start.linkTo(parent.start, padding_24)
-                    end.linkTo(parent.end, padding_24)
-                    top.linkTo(titleRef.bottom)
-                    width = Dimension.fillToConstraints
-                }
-            )
-//            Button(
-//                onClick = {
-//
-//                },
-//                elevation = buttonNoElevation,
-//                colors = ButtonDefaults.buttonColors(
-//                    backgroundColor = Color.Transparent,
-//                    disabledBackgroundColor = Color.Transparent
-//                ),
-//                modifier = Modifier
-//                    .constrainAs(buttonRef) {
-//                        linkTo(
-//                            start = parent.start,
-//                            startMargin = padding_8,
-//                            end = parent.end,
-//                            endMargin = padding_8
-//                        )
-//                        top.linkTo(bodyRef.bottom, padding_24)
-//                        bottom.linkTo(parent.bottom, padding_24)
-//                        width = Dimension.fillToConstraints
-//                    }
-//            ) {
-//                Text(
-//                    text = stringResource(R.string.add_favourite_actors),
-//                    textAlign = TextAlign.Center,
-//                    fontSize = 18.sp,
-//                    color = Color.White,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .background(
-//                            color = Color1,
-//                            shape = MaterialTheme.shapes.medium
-//                        )
-//                        .padding(
-//                            vertical = padding_16
-//                        )
-//                )
-//            }
+                },
+                elevation = buttonNoElevation,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Transparent,
+                    disabledBackgroundColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .constrainAs(buttonRef) {
+                        linkTo(
+                            start = parent.start,
+                            startMargin = padding_8,
+                            end = parent.end,
+                            endMargin = padding_8
+                        )
+                        top.linkTo(bodyRef.bottom)
+                        bottom.linkTo(parent.bottom)
+                        width = Dimension.fillToConstraints
+                    }
+            ) {
+                Text(
+                    text = stringResource(R.string.add_favourite_actors),
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    color = Color2,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = Color1,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                        .padding(vertical = padding_16)
+                )
+            }
+            } else {
+                IMDBProfileCast(
+                    cast = castList,
+                    modifier = Modifier
+                        .constrainAs(bodyRef) {
+                            start.linkTo(parent.start, padding_8)
+                            end.linkTo(parent.end, padding_8)
+                            top.linkTo(movieTitle.bottom)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.wrapContent
+                        }
+                )
+            }
         }
     }
 }
 
 @Composable
-fun ProfileOptions(
-    modifier: Modifier,
-    signOut: () -> Unit
+fun IMDBProfileCast(
+    cast: List<CastView>,
+    modifier: Modifier
 ) {
+    val state = rememberLazyListState()
     ConstraintLayout(modifier = modifier) {
-        val (separator, signout, signoutIcon, secondSeparator) = createRefs()
+        val (castcolorLine) = createRefs()
+        ConstraintLayout(modifier = modifier.constrainAs(castcolorLine) {
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            top.linkTo(parent.top)
+        }.fillMaxWidth()) {
+            val (listCast) = createRefs()
+            LazyRow(
+                contentPadding = PaddingValues(vertical = padding_16),
+                state = state,
+                modifier = Modifier.constrainAs(listCast) {
+                    linkTo(
+                        start = parent.start,
+                        startMargin = padding_16,
+                        end = parent.end,
+                        endMargin = padding_16
+                    )
+                    top.linkTo(parent.top)
+                    width = Dimension.fillToConstraints
+                }
+            ) {
+                items(cast) {
+                    MovieDetailCastItem(it)
+                }
+            }
+        }
+    }
+}
+@Composable
+fun ProfileLogoutOptions(
+    modifier: Modifier,
+    logout: () -> Unit
+) {
+    ConstraintLayout(modifier = modifier
+        .clickable { logout() }
+    ) {
+        val (separator, button, icon, secondSeparator) = createRefs()
         Divider(
             modifier = Modifier
                 .background(SeparatorColor)
-                .height(12.dp)
+                .height(padding_12)
                 .constrainAs(separator) {
                     top.linkTo(parent.top)
                 }
@@ -612,8 +663,7 @@ fun ProfileOptions(
             color = Color.Black,
             modifier = Modifier
                 .padding(horizontal = padding_24, vertical = padding_16)
-                .clickable { signOut() }
-                .constrainAs(signout) {
+                .constrainAs(button) {
                     top.linkTo(separator.bottom)
                     linkTo(start = parent.start, end = parent.end)
                     width = Dimension.fillToConstraints
@@ -624,10 +674,10 @@ fun ProfileOptions(
             contentDescription = "icon",
             tint = SeparatorColor,
             modifier = Modifier
-                .constrainAs(signoutIcon) {
+                .constrainAs(icon) {
                     end.linkTo(parent.end, padding_24)
-                    top.linkTo(signout.top)
-                    bottom.linkTo(signout.bottom)
+                    top.linkTo(button.top)
+                    bottom.linkTo(button.bottom)
                 }
         )
         Divider(
@@ -635,8 +685,41 @@ fun ProfileOptions(
                 .background(SeparatorColor)
                 .height(12.dp)
                 .constrainAs(secondSeparator) {
-                    top.linkTo(signout.bottom)
+                    top.linkTo(button.bottom)
                 }
         )
+    }
+}
+
+@Composable
+fun IMDBProfileMovies(
+    movies: List<MovieView>,
+    goToDetail: (Int) -> Unit,
+    modifier: Modifier
+) {
+    ConstraintLayout(modifier = modifier) {
+        val state = rememberLazyListState()
+        val (rv) = createRefs()
+        LazyRow(
+            contentPadding = PaddingValues(vertical = padding_16),
+            state = state,
+            modifier = Modifier.constrainAs(rv) {
+                linkTo(
+                    start = parent.start,
+                    startMargin = padding_16,
+                    end = parent.end,
+                    endMargin = padding_16
+                )
+                top.linkTo(parent.top)
+                width = Dimension.fillToConstraints
+            }
+        ) {
+            items(movies) { movieView ->
+                IMDBMoviesItem(
+                    movieView,
+                    goToDetail = goToDetail
+                )
+            }
+        }
     }
 }

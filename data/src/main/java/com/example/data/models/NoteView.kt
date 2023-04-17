@@ -1,23 +1,23 @@
 package com.example.data.models
 
-data class NoteModel(
+data class NoteView(
     val title: String,
     val comment: String,
     val count: Int
 )
 
-val noteModelList = listOf(
-    NoteModel(
+val noteViewMockList = listOf(
+    NoteView(
         title = "Grades",
         comment = "Rate and get recommendations",
         count = 0
     ),
-    NoteModel(
+    NoteView(
         title = "Lists",
         comment = "Add to lists",
         count = 4
     ),
-    NoteModel(
+    NoteView(
         title = "Comments",
         comment = "No reviews yet",
         count = 0

@@ -31,7 +31,7 @@ import coil.request.ImageRequest
 import com.example.core.view.*
 import com.example.core.view.compose.FailedAnimation
 import com.example.core.view.compose.LoadingAnimation
-import com.example.data.models.CastModel
+import com.example.data.models.CastView
 import com.example.data.models.MovieDetailResponse
 import com.example.home.R
 import com.example.home.helpers.HomeState
@@ -69,7 +69,7 @@ fun HomeMovieScreen(
             ConstraintLayout(
                 modifier = modifier.fillMaxWidth()
             ) {
-                MovieDetailContent(
+                MovieDetailInfoContent(
                     movieDetailView = movieDetailView,
                     backScreen = backScreen
                 )
@@ -79,7 +79,7 @@ fun HomeMovieScreen(
 }
 
 @Composable
-fun MovieDetailContent(
+fun MovieDetailInfoContent(
     movieDetailView: MovieDetailView?,
     backScreen: () -> Unit,
     modifier: Modifier = Modifier
@@ -105,13 +105,13 @@ fun MovieDetailContent(
         )
         movieDetailView?.detail?.let {
             MovieDetailHeader(
-                it,
+                movieDetailView.detail,
                 modifier = Modifier.constrainAs(header) {
                     linkTo(
                         start = parent.start,
                         end = parent.end
                     )
-                    top.linkTo(toolbar.bottom)
+                    top.linkTo(toolbar.bottom, padding_4)
                     width = Dimension.fillToConstraints
                 }
             )
@@ -184,23 +184,22 @@ fun MovieDetailContent(
                 text = stringResource(R.string.add_to_my_list),
                 textAlign = TextAlign.Center,
                 fontSize = 18.sp,
-                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                color = Color2,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
                         color = Color1,
                         shape = MaterialTheme.shapes.medium
                     )
-                    .padding(
-                        vertical = padding_4
-                    )
+                    .padding(vertical = padding_4)
             )
         }
 
         Divider(
             modifier = Modifier
                 .background(SeparatorColor)
-                .height(0.5.dp)
+                .height(padding_8)
                 .constrainAs(secondDivider) {
                     linkTo(
                         start = parent.start,
@@ -209,9 +208,9 @@ fun MovieDetailContent(
                     top.linkTo(followButton.bottom, padding_4)
                 }
         )
-        movieDetailView?.cast?.let {
+        if (movieDetailView?.cast?.isNotEmpty() == true) {
             MovieDetailCast(
-                cast = it,
+                cast = movieDetailView.cast,
                 modifier = Modifier
                     .constrainAs(cast) {
                         linkTo(
@@ -223,7 +222,7 @@ fun MovieDetailContent(
                     }
             )
         }
-        movieDetailView?.recommendation?.let {
+        if (movieDetailView?.recommendation?.isNotEmpty() == true) {
             IMDBMovies(
                 title = stringResource(R.string.recommendations),
                 movies = movieDetailView.recommendation,
@@ -232,8 +231,8 @@ fun MovieDetailContent(
                 },
                 modifier = Modifier.constrainAs(recommendation) {
                     val previous = when {
-                        movieDetailView.cast.isEmpty() -> secondDivider.bottom
-                        else -> cast.bottom
+                        movieDetailView.cast.isNotEmpty() -> cast.bottom
+                        else -> secondDivider.bottom
                     }
                     linkTo(
                         start = parent.start,
@@ -258,11 +257,11 @@ fun MovieDetailToolbar(
             .fillMaxWidth()
             .height(48.dp)
     ) {
-        val (back, titleRef, divider) = createRefs()
+        val (back, movieTitle, divider) = createRefs()
         Icon(
             imageVector = Icons.Filled.ArrowBack,
             contentDescription = "icon",
-            tint = Color.Black,
+            tint = Color2,
             modifier = Modifier
                 .clickable { backScreen() }
                 .constrainAs(back) {
@@ -275,9 +274,9 @@ fun MovieDetailToolbar(
             text = title,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = Color.Black,
+            color = Color2,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.constrainAs(titleRef) {
+            modifier = Modifier.constrainAs(movieTitle) {
                 linkTo(
                     start = parent.start,
                     startMargin = padding_40,
@@ -309,20 +308,19 @@ fun MovieDetailHeader(
     modifier: Modifier
 ) {
     ConstraintLayout(modifier = modifier) {
-        val (titleBullet, originalTitle, id) = createRefs()
-        ConstraintLayout(modifier = modifier.constrainAs(titleBullet) {
+        val (barTitle, colorLine, movieTitle, original, idMovie) = createRefs()
+        ConstraintLayout(modifier = modifier.constrainAs(barTitle) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(parent.top)
         }.fillMaxWidth()) {
-            val (bullet, titleRef) = createRefs()
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
                     .background(Color1)
-                    .constrainAs(bullet) {
+                    .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)
                     }
@@ -331,56 +329,56 @@ fun MovieDetailHeader(
                 text = movie.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.constrainAs(titleRef) {
+                color = Color2,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.constrainAs(movieTitle) {
                     linkTo(
-                        start = bullet.end,
+                        start = colorLine.end,
                         startMargin = padding_12,
                         end = parent.end,
                         endMargin = padding_24
                     )
-                    top.linkTo(bullet.top)
-                    bottom.linkTo(bullet.bottom)
+                    top.linkTo(colorLine.top)
+                    bottom.linkTo(colorLine.bottom)
+                    width = Dimension.fillToConstraints
+                }
+            )
+            Text(
+                text = movie.originalTitle + stringResource(R.string.original_title),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = Color3,
+                fontSize = 12.sp,
+                modifier = Modifier.constrainAs(original) {
+                    linkTo(
+                        start = parent.start,
+                        startMargin = padding_40,
+                        end = parent.end,
+                        endMargin = padding_24
+                    )
+                    top.linkTo(colorLine.bottom)
+                    width = Dimension.fillToConstraints
+                }
+            )
+            Text(
+                text = stringResource(R.string.id) + movie.id,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = Color3,
+                fontSize = 12.sp,
+                modifier = Modifier.constrainAs(idMovie) {
+                    linkTo(
+                        start = parent.start,
+                        startMargin = padding_40,
+                        end = parent.end,
+                        endMargin = padding_24
+                    )
+                    top.linkTo(original.bottom)
                     width = Dimension.fillToConstraints
                 }
             )
         }
-        Text(
-            text = "${movie.originalTitle} (titulo original)",
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = Color3,
-            fontSize = 10.sp,
-            modifier = Modifier.constrainAs(originalTitle) {
-                linkTo(
-                    start = parent.start,
-                    startMargin = padding_40,
-                    end = parent.end,
-                    endMargin = padding_24
-                )
-                top.linkTo(titleBullet.bottom, padding_4)
-                width = Dimension.fillToConstraints
-            }
-        )
-        Text(
-            text = "ID: ${movie.id}",
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = Color3,
-            fontSize = 12.sp,
-            modifier = Modifier.constrainAs(id) {
-                linkTo(
-                    start = parent.start,
-                    startMargin = padding_40,
-                    end = parent.end,
-                    endMargin = padding_24
-                )
-                top.linkTo(originalTitle.bottom, padding_4)
-                width = Dimension.fillToConstraints
-            }
-        )
     }
 }
 
@@ -428,7 +426,7 @@ fun MovieDetailSummary(
             painter = painterResource(
                 id = R.drawable.star
             ),
-            contentDescription = "star",
+            contentDescription = "star icon",
             modifier = Modifier
                 .constrainAs(star) {
                     start.linkTo(genres.end, padding_12)
@@ -448,8 +446,8 @@ fun MovieDetailSummary(
                 }
         )
         Text(
-            text = movie.overview.orEmpty(),
-            color = Color.Black,
+            text = movie.overview,
+            color = Color2,
             fontSize = 14.sp,
             maxLines = 4,
             fontWeight = FontWeight.Normal,
@@ -467,45 +465,45 @@ fun MovieDetailSummary(
 
 @Composable
 fun MovieDetailCast(
-    cast: List<CastModel>,
+    cast: List<CastView>,
     modifier: Modifier
 ) {
     val state = rememberLazyListState()
     ConstraintLayout(modifier = modifier) {
-        val (castBullet) = createRefs()
-        ConstraintLayout(modifier = modifier.constrainAs(castBullet) {
+        val (castcolorLine) = createRefs()
+        ConstraintLayout(modifier = modifier.constrainAs(castcolorLine) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(parent.top)
         }.fillMaxWidth()) {
-            val (bullet, titleRef, listCast) = createRefs()
+            val (colorLine, movieTitle, listCast) = createRefs()
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
                     .background(Color1)
-                    .constrainAs(bullet) {
+                    .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)
                     }
             )
             Text(
-                text = "Reparto",
+                text = stringResource(R.string.cast),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
+                color = Color2,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier.constrainAs(titleRef) {
+                modifier = Modifier.constrainAs(movieTitle) {
                     linkTo(
-                        start = bullet.end,
+                        start = colorLine.end,
                         startMargin = padding_12,
                         end = parent.end,
                         endMargin = padding_24
                     )
-                    top.linkTo(bullet.top)
-                    bottom.linkTo(bullet.bottom)
+                    top.linkTo(colorLine.top)
+                    bottom.linkTo(colorLine.bottom)
                     width = Dimension.fillToConstraints
                 }
             )
@@ -519,7 +517,7 @@ fun MovieDetailCast(
                         end = parent.end,
                         endMargin = padding_16
                     )
-                    top.linkTo(titleRef.bottom, padding_4)
+                    top.linkTo(movieTitle.bottom, padding_4)
                     width = Dimension.fillToConstraints
                 }
             ) {
@@ -533,7 +531,7 @@ fun MovieDetailCast(
 
 @Composable
 fun MovieDetailCastItem(
-    castModel: CastModel,
+    castView: CastView,
     modifier: Modifier = Modifier
 ) {
     ConstraintLayout(
@@ -543,48 +541,41 @@ fun MovieDetailCastItem(
         val (poster, name, originalName) = createRefs()
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(castModel.profileUrl)
+                .data(castView.profileUrl)
                 .crossfade(true)
                 .build(),
             placeholder = painterResource(R.drawable.placeholder),
-            contentDescription = "cast poster",
+            contentDescription = "cast profile poster",
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .height(106.dp)
                 .width(74.dp)
                 .constrainAs(poster) {
-                    linkTo(
-                        start = parent.start,
-                        end = parent.end
-                    )
+                    linkTo(start = parent.start, end = parent.end)
                     top.linkTo(parent.top)
                 }
         )
         Text(
-            text = castModel.name,
+            text = castView.name,
             maxLines = 1,
             fontSize = 10.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Light,
-            color = Color.Black,
+            color = Color2,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .constrainAs(name) {
-                    linkTo(
-                        start = parent.start,
-                        startMargin = padding_4,
-                        end = parent.end,
-                        endMargin = padding_4
-                    )
-                    top.linkTo(
-                        poster.bottom,
-                        padding_4
-                    )
-                    width = Dimension.fillToConstraints
+            modifier = Modifier.constrainAs(name) {
+                            linkTo(
+                                start = parent.start,
+                                startMargin = padding_4,
+                                end = parent.end,
+                                endMargin = padding_4
+                            )
+                            top.linkTo(poster.bottom, padding_4)
+                            width = Dimension.fillToConstraints
                 }
         )
         Text(
-            text = castModel.originalName,
+            text = castView.originalName,
             textAlign = TextAlign.Center,
             maxLines = 1,
             fontSize = 10.sp,
@@ -599,13 +590,8 @@ fun MovieDetailCastItem(
                         end = parent.end,
                         endMargin = padding_4
                     )
-                    top.linkTo(
-                        name.bottom
-                    )
-                    bottom.linkTo(
-                        parent.bottom,
-                        padding_4
-                    )
+                    top.linkTo(name.bottom)
+                    bottom.linkTo(parent.bottom, padding_4)
                     width = Dimension.fillToConstraints
                 }
         )
