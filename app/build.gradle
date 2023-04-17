@@ -71,6 +71,7 @@ android {
         ]
     }
 
+    flavorDimensions "env"
 }
 
 dependencies {
