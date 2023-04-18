@@ -22,7 +22,7 @@ jobs:
       - name: Enable Executions
         run: chmod +x gradlew
       - name: Build App with Gradle
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleRecommendationDebug
       - name: Testing unit-cases from :login module
         run: ./gradlew assembleDebug lint testDebugUnitTest -p login
       - name: Upload Testing login module
