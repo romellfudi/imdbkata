@@ -31,15 +31,23 @@ android {
     buildTypes.each {
         it.buildConfigField("String", "IMDB_API_KEY", keystoreProperties['imdbApiKey'])
     }
-//    flavorDimensions "env"
-//    productFlavors {
-//        no {
-//            dimension "env"
-//        }
-//        recommendation {
-//            dimension "env"
-//        }
-//    }
+    flavorDimensions "env"
+    productFlavors {
+        recommendation {
+            dimension "env"
+        }
+        basic {
+            dimension "env"
+        }
+    }
+    sourceSets {
+        recommendation  {
+            java.srcDirs = ['src/recommendation/java']
+        }
+        basic {
+            java.srcDirs = ['src/basic/java']
+        }
+    }
 //    variantFilter { variant ->
 //        def names = variant.flavors*.name
 //        if (names.contains("Release")) {

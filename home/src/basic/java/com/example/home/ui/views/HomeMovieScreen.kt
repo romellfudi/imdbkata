@@ -90,7 +90,7 @@ fun MovieDetailInfoContent(
             .fillMaxWidth()
             .verticalScroll(state)
     ) {
-        val (toolbar, header, backdropImage, summary, firstDivider, followButton, secondDivider, cast) = createRefs()
+        val (toolbar, header, backdropImage, summary, firstDivider, followButton, secondDivider, lastDivider , cast) = createRefs()
         MovieDetailToolbar(
             movieDetailView?.detail?.title ?: stringResource(R.string.movie_title_default),
             modifier = Modifier.constrainAs(toolbar) {
@@ -217,11 +217,23 @@ fun MovieDetailInfoContent(
                             start = parent.start,
                             end = parent.end,
                         )
-                        top.linkTo(secondDivider.bottom, padding_4)
+                        top.linkTo(secondDivider.bottom)
                         width = Dimension.fillToConstraints
                     }
             )
         }
+        Divider(
+            modifier = Modifier
+                .background(SeparatorColor)
+                .height(padding_8)
+                .constrainAs(lastDivider) {
+                    linkTo(
+                        start = parent.start,
+                        end = parent.end,
+                    )
+                    top.linkTo(cast.bottom)
+                }
+        )
     }
 }
 
@@ -453,7 +465,6 @@ fun MovieDetailCast(
         ConstraintLayout(modifier = modifier.constrainAs(castcolorLine) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
-            top.linkTo(parent.top)
         }.fillMaxWidth()) {
             val (colorLine, movieTitle, listCast) = createRefs()
             Box(
@@ -496,7 +507,7 @@ fun MovieDetailCast(
                         end = parent.end,
                         endMargin = padding_16
                     )
-                    top.linkTo(movieTitle.bottom, padding_4)
+                    top.linkTo(movieTitle.bottom)
                     width = Dimension.fillToConstraints
                 }
             ) {

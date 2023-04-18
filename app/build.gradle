@@ -72,13 +72,22 @@ android {
     }
 
     flavorDimensions "env"
+    productFlavors {
+        recommendation {
+            dimension "env"
+        }
+        basic {
+            dimension "env"
+        }
+    }
 }
 
 dependencies {
 
     implementation project(':core')
     implementation project(':login')
-    implementation project(':home')
+    basicImplementation project(':home')
+    recommendationImplementation project(':home')
     implementation project(':data')
 
     //Navigation
