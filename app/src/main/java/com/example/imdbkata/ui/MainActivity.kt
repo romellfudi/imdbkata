@@ -96,9 +96,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("home") {
                             HomeScreen(
-                                toMovieDetail = {
-                                    navigationController.navigate("detail/$it")
-                                },
+                                toMovieDetail = { navigationController.navigate("detail/$it") },
                                 backScreen = {
                                     navigationController.navigateAndReplaceStartRoute("login")
                                 },
@@ -118,9 +116,7 @@ class MainActivity : ComponentActivity() {
                             ),
                             content = { backStackEntry ->
                                 HomeMovieScreen(
-                                    toMovieDetail = {
-                                        navigationController.navigate("detail/$it")
-                                    },
+                                    toMovieDetail = { navigationController.navigate("detail/$it") },
                                     backScreen = {
                                         navigationController.popBackStack()
                                     },
