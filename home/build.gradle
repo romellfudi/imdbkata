@@ -40,14 +40,6 @@ android {
             dimension "env"
         }
     }
-    sourceSets {
-        recommendation  {
-            java.srcDirs = ['src/recommendation/java']
-        }
-        basic {
-            java.srcDirs = ['src/basic/java']
-        }
-    }
 //    variantFilter { variant ->
 //        def names = variant.flavors*.name
 //        if (names.contains("Release")) {
