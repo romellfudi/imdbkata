@@ -156,7 +156,7 @@ fun BottomBar(
                     linkTo(
                         top = parent.top,
                         topMargin = padding_15,
-                        bottomMargin = padding_15,
+                        bottomMargin = padding_8,
                         bottom = parent.bottom
                     )
                 }
@@ -171,7 +171,7 @@ fun BottomBar(
                 linkTo(
                     top = parent.top,
                     topMargin = padding_15,
-                    bottomMargin = padding_15,
+                    bottomMargin = padding_8,
                     bottom = parent.bottom
                 )
             }
@@ -186,7 +186,7 @@ fun BottomBar(
                 linkTo(
                     top = parent.top,
                     topMargin = padding_15,
-                    bottomMargin = padding_15,
+                    bottomMargin = padding_8,
                     bottom = parent.bottom
                 )
             }
@@ -201,7 +201,7 @@ fun BottomBar(
                 linkTo(
                     top = parent.top,
                     topMargin = padding_15,
-                    bottomMargin = padding_15,
+                    bottomMargin = padding_8,
                     bottom = parent.bottom
                 )
             }
@@ -304,7 +304,7 @@ fun OptionsNavHost(
             HomePlayScreen(playerViewModel, toMovieDetail)
         }
         composable(route = TapViewState.Profile.route) {
-            HomeProfileScreen(profileViewModel, viewModel::signOut)
+            HomeProfileScreen(profileViewModel, toMovieDetail, viewModel::signOut)
         }
     }
 }

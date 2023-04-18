@@ -30,15 +30,15 @@ jobs:
         with:
           name: login-module-unit-test
           path: login/build/reports/tests/testDebugUnitTest
-      - name: Testing unit-cases cases from :home module
-        run: ./gradlew assembleDebug lint testDebugUnitTest -p home
+      - name: Testing unit-cases cases from :home module with 'basic' flavor
+        run: ./gradlew assembleDebug lint testBasicDebugUnitTest -p home
       - name: Upload Testing home module
         uses: actions/upload-artifact@v1
         with:
           name: home-module-unit-test
-          path: home/build/reports/tests/testDebugUnitTest
+          path: home/build/reports/tests/testBasicDebugUnitTest
       - name: Upload app artifact
         uses: actions/upload-artifact@v1
         with:
           name: imdbKataApp.apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/basic/debug/app-basic-debug.apk

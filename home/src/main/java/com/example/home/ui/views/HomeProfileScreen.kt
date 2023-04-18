@@ -43,6 +43,7 @@ import com.example.home.ui.viewmodels.HomeProfileViewModel
 @Composable
 fun HomeProfileScreen(
     viewModel: HomeProfileViewModel,
+    toMovieDetail: (Int) -> Unit,
     onLogout: () -> Unit,
     isDark: Boolean = isSystemInDarkTheme(),
     modifier: Modifier = Modifier,
@@ -89,6 +90,7 @@ fun HomeProfileScreen(
         )
         FollowList(
             followList = followMovieList,
+            toMovieDetail = { toMovieDetail(it) },
             modifier = Modifier.constrainAs(followList) {
                 linkTo(start = parent.start, end = parent.end)
                 top.linkTo(note.bottom)
@@ -98,6 +100,7 @@ fun HomeProfileScreen(
         )
         MoviesRecentViewed(
             recentViewedMovieList,
+            toMovieDetail = { toMovieDetail(it) },
             modifier = Modifier.constrainAs(recentList) {
                 linkTo(start = parent.start, end = parent.end)
                 top.linkTo(followList.bottom)
@@ -319,6 +322,7 @@ fun NoteViewItem(
 @Composable
 fun FollowList(
     followList: List<MovieView>,
+    toMovieDetail: (Int) -> Unit,
     modifier: Modifier
 ) {
     ConstraintLayout(modifier = modifier) {
@@ -386,7 +390,7 @@ fun FollowList(
         } else {
             IMDBProfileMovies(
                 movies = followList,
-                goToDetail = {},
+                goToDetail = toMovieDetail,
                 modifier = Modifier
                     .constrainAs(followEmptyText) {
                         start.linkTo(parent.start, padding_8)
@@ -403,6 +407,7 @@ fun FollowList(
 @Composable
 fun MoviesRecentViewed(
     recentViewedList: List<MovieView>,
+    toMovieDetail: (Int) -> Unit,
     modifier: Modifier
 ) {
     ConstraintLayout(modifier = modifier) {
@@ -471,7 +476,7 @@ fun MoviesRecentViewed(
         } else {
             IMDBProfileMovies(
                 movies = recentViewedList,
-                goToDetail = {},
+                goToDetail = toMovieDetail,
                 modifier = Modifier
                     .constrainAs(viewText) {
                         start.linkTo(parent.start, padding_8)
@@ -553,9 +558,7 @@ fun FavouritePeople(
                     }
                 )
             Button(
-                onClick = {
-
-                },
+                onClick = { },
                 elevation = buttonNoElevation,
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Transparent,
