@@ -46,6 +46,7 @@ import com.example.home.ui.viewmodels.HomeMovieViewModel
  */
 @Composable
 fun HomeMovieScreen(
+    toMovieDetail: (Int) -> Unit,
     backScreen: () -> Unit,
     viewModel: HomeMovieViewModel,
     id: Int,
@@ -71,6 +72,7 @@ fun HomeMovieScreen(
                 modifier = modifier.fillMaxWidth()
             ) {
                 MovieDetailInfoContent(
+                    toMovieDetail = toMovieDetail,
                     movieDetailView = movieDetailView,
                     backScreen = backScreen
                 )
@@ -82,6 +84,7 @@ fun HomeMovieScreen(
 @Composable
 fun MovieDetailInfoContent(
     movieDetailView: MovieDetailView?,
+    toMovieDetail: (Int) -> Unit,
     backScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -227,9 +230,7 @@ fun MovieDetailInfoContent(
             IMDBMoviesRecommendations(
                 title = stringResource(R.string.recommendations),
                 movies = movieDetailView.recommendation,
-                goToDetail = {
-
-                },
+                goToDetail = { toMovieDetail(it) },
                 modifier = Modifier.constrainAs(recommendation) {
                     val previous = when {
                         movieDetailView.cast.isNotEmpty() -> cast.bottom

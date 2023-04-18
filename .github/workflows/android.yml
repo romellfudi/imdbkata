@@ -22,7 +22,7 @@ jobs:
       - name: Enable Executions
         run: chmod +x gradlew
       - name: Build App with Gradle
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleRecommendationDebug
       - name: Testing unit-cases from :login module
         run: ./gradlew assembleDebug lint testDebugUnitTest -p login
       - name: Upload Testing login module
@@ -30,15 +30,15 @@ jobs:
         with:
           name: login-module-unit-test
           path: login/build/reports/tests/testDebugUnitTest
-      - name: Testing unit-cases cases from :home module with 'basic' flavor
-        run: ./gradlew assembleDebug lint testBasicDebugUnitTest -p home
-      - name: Upload Testing home module
+      - name: Testing unit-cases cases from :home module with 'recommendation' flavor
+        run: ./gradlew assembleDebug lint testRecommendationDebugUnitTest -p home
+      - name: Upload Testing home module with 'recommendation' flavor
         uses: actions/upload-artifact@v1
         with:
           name: home-module-unit-test
-          path: home/build/reports/tests/testBasicDebugUnitTest
-      - name: Upload app artifact
+          path: home/build/reports/tests/testRecommendationDebugUnitTest
+      - name: Upload app artifact with 'recommendation' flavor
         uses: actions/upload-artifact@v1
         with:
           name: imdbKataApp.apk
-          path: app/build/outputs/apk/basic/debug/app-basic-debug.apk
+          path: app/build/outputs/apk/recommendation/debug/app-recommendation-debug.apk

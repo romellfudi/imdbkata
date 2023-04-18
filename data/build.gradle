@@ -5,7 +5,7 @@ plugins {
     id 'kotlin-android'
     id 'dagger.hilt.android.plugin'
 }
-apply from: '../basic_flavors.gradle'
+apply from: '../extensions.gradle'
 
 android {
     namespace 'com.example.data'

@@ -4,16 +4,17 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
 }
-apply from: '../basic_flavors.gradle'
+apply from: '../extensions.gradle'
 
 android {
     namespace 'com.example.home'
+    with java8Config
+    with composeConfig
     with flavorConfig
     buildTypes.each {
         it.buildConfigField("String", "IMDB_API_KEY", keys['imdbApiKey'])
+        it.buildConfigField("String", "IMDB_BASE_URL", keys['baseUrl'])
     }
-    with java8Config
-    with composeConfig
 }
 
 dependencies {

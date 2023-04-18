@@ -9,8 +9,8 @@ import javax.inject.Inject
 class FetchGenresUseCase @Inject constructor(
     private val homeFetchMoviesRepository: HomeFetchMoviesRepository
 ) {
-    operator fun invoke(query: String? = null): Flow<Boolean> = flow {
-        homeFetchMoviesRepository.fetchGenres(query).collect {
+    operator fun invoke(): Flow<Boolean> = flow {
+        homeFetchMoviesRepository.fetchGenres().collect {
             if (it is IMDBState.Success) {
                 homeFetchMoviesRepository.storeGenresInDatabase(it.data.genres)
                 emit(true)

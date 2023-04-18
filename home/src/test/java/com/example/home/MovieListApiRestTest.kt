@@ -2,7 +2,7 @@ package com.example.home
 
 import com.example.data.models.Movie
 import com.example.data.models.MovieResponse
-import com.example.home.data.api.Api
+import com.example.home.data.api.MovieListApi
 import com.example.home.data.api.IMDBState
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -26,10 +26,10 @@ import org.robolectric.annotation.Config
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [21])
-class ApiRestTest {
+class MovieListApiRestTest {
 
     @Mock
-    internal val api: Api = mock()
+    internal val api: MovieListApi = mock()
 
     @Before
     fun setUp() {

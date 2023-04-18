@@ -1,7 +1,10 @@
 package com.example.home.data.di
 
-import com.example.home.data.api.Api
+import com.example.home.BuildConfig
+import com.example.home.data.api.GenreApi
 import com.example.home.data.api.IMDBState
+import com.example.home.data.api.MovieApi
+import com.example.home.data.api.MovieListApi
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -38,13 +41,35 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRavenApi(moshi: Moshi): Api {
+    fun provideRavenApi(moshi: Moshi): MovieListApi {
         return Retrofit.Builder()
-            .baseUrl("https://api.themoviedb.org/3/")
+            .baseUrl(BuildConfig.IMDB_BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(FlowResourceCallAdapterFactory())
             .build()
-            .create(Api::class.java)
+            .create(MovieListApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRavenMovieApi(moshi: Moshi): MovieApi {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.IMDB_BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(FlowResourceCallAdapterFactory())
+            .build()
+            .create(MovieApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRavenGenreApi(moshi: Moshi): GenreApi {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.IMDB_BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(FlowResourceCallAdapterFactory())
+            .build()
+            .create(GenreApi::class.java)
     }
 
 }
