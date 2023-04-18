@@ -41,4 +41,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: imdbKataApp.apk
-          path: app/build/outputs/apk/debug/app-basic-debug.apk
+          path: app/build/outputs/apk/basic/debug/app-basic-debug.apk
