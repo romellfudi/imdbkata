@@ -6,6 +6,7 @@ import com.example.data.models.Movie
 import com.example.home.ui.viewmodels.HomeViewModel
 import com.example.home.usecase.*
 import com.example.home.usecase.firebase.SignOutUseCase
+import com.example.home.usecase.local.ExistLocalDataUseCase
 import com.example.home.usecase.local.GetGenresUseCase
 import com.example.home.usecase.local.GetPopularMoviesUseCase
 import com.example.home.usecase.local.GetTopRatedMoviesUseCase
@@ -37,6 +38,9 @@ import org.robolectric.annotation.Config
 class HomeViewModelTest {
 
     private val dispatcherProvider = ViewModelDispatcherProvider()
+
+    @MockK
+    lateinit var existLocalDataUseCase: ExistLocalDataUseCase
 
     @MockK
     lateinit var fetchTopRatedMoviesUseCase: FetchTopRatedMoviesUseCase
@@ -88,6 +92,7 @@ class HomeViewModelTest {
         val genres = listOf(
             Genre(1, "Action"),
         )
+        every { existLocalDataUseCase.invoke() }.returns(flowOf(true))
         every { getTopRatedMoviesUseCase.invoke() }.returns(flowOf(movies))
         every { getPopularMoviesUseCase.invoke() }.returns(flowOf(movies))
         every { getGenresUseCase.invoke() }.returns(flowOf(genres))
@@ -96,9 +101,10 @@ class HomeViewModelTest {
         every { fetchGenresUseCase.invoke() }.returns(flowOf(true))
         // Create a HomeViewModel object with the mock use case and dispatcher
         val viewModel = HomeViewModel(
+            existLocalDataUseCase,
             fetchTopRatedMoviesUseCase, fetchPopularMoviesUseCase, fetchGenresUseCase,
-            getTopRatedMoviesUseCase, getPopularMoviesUseCase, getGenresUseCase, signOutUseCase,
-            dispatcherProvider
+            getTopRatedMoviesUseCase, getPopularMoviesUseCase, getGenresUseCase,
+            signOutUseCase, dispatcherProvider
         )
 
         viewModel.loadRemoteData()
@@ -120,14 +126,16 @@ class HomeViewModelTest {
             Genre(1, "Action"),
             Genre(2, "Adventure"),
         )
+        every { existLocalDataUseCase.invoke() }.returns(flowOf(true))
         every { getGenresUseCase.invoke() }.returns(flowOf(genres))
 
         val genreDict = genres.associate { it.id to it.name }
         // Create a HomeViewModel object with the mock use case and dispatcher
         val viewModel = HomeViewModel(
+            existLocalDataUseCase,
             fetchTopRatedMoviesUseCase, fetchPopularMoviesUseCase, fetchGenresUseCase,
-            getTopRatedMoviesUseCase, getPopularMoviesUseCase, getGenresUseCase, signOutUseCase,
-            dispatcherProvider
+            getTopRatedMoviesUseCase, getPopularMoviesUseCase, getGenresUseCase,
+            signOutUseCase, dispatcherProvider
         )
         viewModel.genresDict.test {
             viewModel.getLocalGenreData()
