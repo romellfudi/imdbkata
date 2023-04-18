@@ -118,6 +118,9 @@ class MainActivity : ComponentActivity() {
                             ),
                             content = { backStackEntry ->
                                 HomeMovieScreen(
+                                    toMovieDetail = {
+                                        navigationController.navigate("detail/$it")
+                                    },
                                     backScreen = {
                                         navigationController.popBackStack()
                                     },
