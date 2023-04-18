@@ -22,10 +22,10 @@ android {
 
 dependencies {
     implementation project(':core')
+    implementation project(':data')
     implementation project(':login')
     basicImplementation project(':home')
     recommendationImplementation project(':home')
-    implementation project(':data')
     with navigationImp
     with composeImp
     with lifecycleImp
