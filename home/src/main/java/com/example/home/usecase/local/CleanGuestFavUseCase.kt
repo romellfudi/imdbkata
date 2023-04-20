@@ -6,10 +6,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
+/**
+ * Use case to clean guest favorite movies
+ */
 class CleanGuestFavUseCase @Inject constructor(
     private val firebaseUserRepository: FirebaseUserRepository,
     private val repository: HomeFetchMoviesRepository
 ) {
+    /**
+     * Invoke the use case to clean guest favorite movies
+     * @return [Flow] with [Boolean] as result
+     */
     operator fun invoke(): Flow<Boolean> = flow {
         firebaseUserRepository.getUserLogged()?.let {
             val result = repository.deleteGuestFav()

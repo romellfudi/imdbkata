@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -222,7 +221,7 @@ fun RegisterScreen(
                 .semantics { testTag = "register_screen_register_button" }
                 .fillMaxWidth()
                 .height(50.dp),
-            registerAction = { viewModel.shouldRegister(nameText, mailText, passwordText) },
+            registerAction = { viewModel.register(nameText.capitalize(), mailText, passwordText) },
             isReadyToLogin = isReadyToLogin
         )
     }

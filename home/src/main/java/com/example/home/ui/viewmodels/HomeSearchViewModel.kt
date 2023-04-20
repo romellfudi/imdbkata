@@ -74,27 +74,24 @@ class HomeSearchViewModel @Inject constructor(
     fun search(query: String = "") {
         _query.value = query
         viewModelScope.launch(dispatcherProvider.main) {
-            _query
-                .asFlow()
+            _query.asFlow()
                 .debounce(DEBOUNCE_PERIOD)
                 .flowOn(dispatcherProvider.main)
-                .distinctUntilChanged()
-                .flatMapLatest { query ->
-                    val filtered = if (query.isNotEmpty()) {
-                        movieList.value.filter { it.title.contains(query.trim(), ignoreCase = true) }
-                    } else {
-                        movieList.value
-                    }
-                    flowOf(filtered.map { it.toMovieView() })
+                .map { query ->
+                    if (query.isEmpty()) movieList.value
+                    else movieList.value.filter { it.title.contains(query.trim(), ignoreCase = true) }
+                }
+                .map { it.map { movie -> movie.toMovieView() } }
+                .onEach {
+                    _filteredMovieList.value = it
+                    _isLoading.value = HomeState.Ready
                 }
                 .catch {
                     _filteredMovieList.value = emptyList()
                     _isLoading.value = HomeState.Error(it.message ?: "Error")
                 }
-                .collect {
-                    _filteredMovieList.value = it
-                    _isLoading.value = HomeState.Ready
-                }
+                .launchIn(viewModelScope)
+
         }
     }
 

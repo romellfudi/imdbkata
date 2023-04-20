@@ -48,7 +48,7 @@ class SplashViewModelTest {
         // Create a SplashViewModel object with the mock use case and dispatcher
         viewModel = SplashViewModel(isLoggedUseCase, dispatcherProvider)
         // Use a flow collector to capture the values emitted by timeFinished
-        viewModel.timeFinished.test {
+        viewModel.isLogged.test {
             // Call the checkUserLogged method to trigger the flow emission
             viewModel.checkUserLogged()
             // Assert that the correct value was emitted by the flow
@@ -69,7 +69,7 @@ class SplashViewModelTest {
         // Create a SplashViewModel object with the mock use case and dispatcher
         viewModel = SplashViewModel(isLoggedUseCase, dispatcherProvider)
         // Use a flow collector to capture the values emitted by timeFinished
-        viewModel.timeFinished.test {
+        viewModel.isLogged.test {
             // Call the checkUserLogged method to trigger the flow emission
             viewModel.checkUserLogged()
             // Assert that the correct value was emitted by the flow

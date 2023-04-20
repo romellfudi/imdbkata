@@ -50,7 +50,7 @@ class RegisterViewModelTest {
         val viewModel = RegisterViewModel(signupUseCase, dispatcherProvider)
         viewModel.shouldRegister.test {
             // Call the checkUserLogged method to trigger the flow emission
-            viewModel.shouldRegister("", "", "12345678")
+            viewModel.register("", "", "12345678")
             // Assert that the correct value was emitted by the flow
             assertEquals("Error", (awaitItem() as LoginViewModelState.Error).message)
             // Cancel the flow collector to prevent it from waiting for more events
@@ -75,7 +75,7 @@ class RegisterViewModelTest {
         val viewModel = RegisterViewModel(signupUseCase, dispatcherProvider)
         viewModel.shouldRegister.test {
             // Call the shouldRegister method to trigger the flow emission
-            viewModel.shouldRegister("romellfudi", "romell.dominguez@gmail.net", "123qweASD!")
+            viewModel.register("romellfudi", "romell.dominguez@gmail.net", "123qweASD!")
             // Assert that the correct value was emitted by the flow
             assertEquals("@gmail.net",
                 (awaitItem() as LoginViewModelState.Success).userEmailOrName)
@@ -85,9 +85,9 @@ class RegisterViewModelTest {
         // Verify that the mock use case was invoked
         verify {
             signupUseCase.invoke(
-                "romellfudi",
-                "romell.dominguez@gmail.net",
-                "123qweASD!".sha256()
+                name = "romellfudi",
+                email = "romell.dominguez@gmail.net",
+                password = "123qweASD!".sha256()
             )
         }
 

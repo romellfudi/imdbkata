@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
+ * ViewModel for Register
  * @author @romellfudi
  * @date 2023-03-16
  * @version 1.0.a
@@ -24,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val signupUseCase: SignupUseCase,
-    val dispatcherProvider: DispatcherProvider
+    private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
     private val _shouldBack = mutableNotReplayFlow<Boolean>()
@@ -55,27 +56,26 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    fun shouldRegister(
+    fun register(
         name: String,
         email: String,
         password: String
     ) {
         viewModelScope.launch(dispatcherProvider.main) {
-            val hashPassword = password.sha256()
-            signupUseCase(name, email, hashPassword)
+            signupUseCase(name, email, password.sha256())
                 .flowOn(dispatcherProvider.main)
-                .catch {
-                    _shouldRegister.tryEmit(LoginViewModelState.Error(it.message.orEmpty()))
-                }
-                .collect {
+                .onEach {
                     when (it) {
                         is LoginState.Success ->
-                            _shouldRegister.tryEmit(LoginViewModelState.Success(it.userEmailOrName))
+                            _shouldRegister.emit(LoginViewModelState.Success(it.userEmailOrName))
                         is LoginState.Error ->
-                            _shouldRegister.tryEmit(LoginViewModelState.Error(it.message))
+                            _shouldRegister.emit(LoginViewModelState.Error(it.message))
                     }
                 }
+                .catch { _shouldRegister.emit(LoginViewModelState.Error(it.message.orEmpty())) }
+                .launchIn(viewModelScope)
         }
+
     }
 
     fun cleanView() {

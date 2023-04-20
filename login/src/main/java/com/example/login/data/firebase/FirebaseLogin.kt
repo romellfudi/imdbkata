@@ -8,10 +8,16 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
+/**
+ * Class that handles authentication w/ login credentials and retrieves user information.
+ */
 class FirebaseLogin @Inject constructor(
     private val auth: FirebaseAuth,
 ) {
 
+    /**
+     * Try to log in with anonymous account
+     */
     suspend fun logInAnonymously(): LoginState {
         return try {
             auth.signInAnonymously().await()
@@ -21,6 +27,9 @@ class FirebaseLogin @Inject constructor(
         }
     }
 
+    /**
+     * Try to log in with email and password
+     */
     suspend fun logInWithEmailAndPassword(email: String, password: String): LoginState {
         return try {
             auth.signInWithEmailAndPassword(email, password)
@@ -31,6 +40,9 @@ class FirebaseLogin @Inject constructor(
         }
     }
 
+    /**
+     * Try to log in with Google account
+     */
     suspend fun logInWithGoogle(googleCredential: AuthCredential): LoginState {
         return try {
             auth.signInWithCredential(googleCredential).await()
@@ -41,6 +53,9 @@ class FirebaseLogin @Inject constructor(
         }
     }
 
+    /**
+     * Try to log in with Facebook account
+     */
     suspend fun logInWithFacebook(accessToken: AccessToken): LoginState {
         val facebookCredential = FacebookAuthProvider.getCredential(accessToken.token)
         return try {

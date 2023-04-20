@@ -20,6 +20,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
+ * LoginViewModel class to handle the login process
+ *
  * @author @romellfudi
  * @date 2023-03-16
  * @version 1.0.a
@@ -38,6 +40,7 @@ class LoginViewModel @Inject constructor(
     private val _shouldNavigateHome = mutableNotReplayFlow<LoginViewModelState>()
     val shouldNavigateHome: SharedFlow<LoginViewModelState> = _shouldNavigateHome
 
+    // StateFlow to handle the email and password fields and the login button
     val email = MutableStateFlow("")
     val password = MutableStateFlow("")
     val isReadyToLogin: Flow<Boolean> = combine(

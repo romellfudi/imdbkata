@@ -9,7 +9,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -18,8 +17,8 @@ import com.example.core.view.compose.AppResourceImage
 import com.example.login.R
 import com.example.login.ui.viewmodels.SplashViewModel
 
-
 /**
+ * SplashScreen is the first screen that the user will see when the app is launched.
  * @author @romellfudi
  * @date 2023-03-16
  * @version 1.0.a
@@ -32,9 +31,9 @@ fun SplashScreen(
 ) {
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    LaunchedEffect(Unit) {
+    LaunchedEffect("Check if user is logged") {
         lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-            viewModel.timeFinished.collect { isLogged ->
+            viewModel.isLogged.collect { isLogged ->
                 when (isLogged) {
                     true -> nextHomeScreen()
                     false -> nextLoginScreen()

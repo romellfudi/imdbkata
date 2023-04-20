@@ -68,7 +68,7 @@ class HomeProfileViewModel @Inject constructor(
                 .catch {
                     _isLoading.value = HomeState.Error(it.message ?: "Error")
                 }.collect {
-                    _movieList.tryEmit(it.map { it.toMovieView() })
+                    _movieList.tryEmit(it.map { movie -> movie.toMovieView() })
                 }
         }
     }

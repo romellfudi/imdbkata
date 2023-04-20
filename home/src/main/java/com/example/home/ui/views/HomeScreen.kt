@@ -59,10 +59,6 @@ fun HomeScreen(
     val backPressDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     val navController = rememberNavController()
 
-    LaunchedEffect("Clear search view") {
-        searchViewModel.search()
-    }
-
     OnBackDispatcherCompose(
         backScreen = backScreen,
         viewModel = viewModel,

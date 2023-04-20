@@ -8,14 +8,12 @@ import com.example.login.helpers.LoggedState
 import com.example.login.usecase.IsLoggedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
+ * SplashViewModel class for the Application
  * @author @romellfudi
  * @date 2023-03-16
  * @version 1.0.a
@@ -30,30 +28,20 @@ class SplashViewModel @Inject constructor(
         const val SPLASH_DELAY = 1500L
     }
 
-    private val _timeFinished = mutableNotReplayFlow<Boolean>()
-    val timeFinished: SharedFlow<Boolean> = _timeFinished
+    private val _isLogged = mutableNotReplayFlow<Boolean>()
+    val isLogged: SharedFlow<Boolean> = _isLogged
 
     init {
-        initEvent()
-    }
-
-    fun initEvent() {
-        viewModelScope.launch(dispatcherProvider.main) {
-            delay(SPLASH_DELAY)
-            checkUserLogged()
-        }
+        checkUserLogged()
     }
 
     fun checkUserLogged() {
         viewModelScope.launch(dispatcherProvider.main) {
             isLoggedUseCase()
-                .flowOn(dispatcherProvider.main)
-                .catch {
-                    _timeFinished.emit(false)
-                }
-                .collect {  state ->
-                    _timeFinished.emit(state is LoggedState.Logged)
-                }
+                .debounce(SPLASH_DELAY)
+                .onEach { state -> _isLogged.emit(state is LoggedState.Logged) }
+                .catch { _isLogged.emit(false) }
+                .launchIn(viewModelScope)
         }
     }
 }

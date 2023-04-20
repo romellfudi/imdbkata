@@ -26,7 +26,6 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val existLocalDataUseCase: ExistLocalDataUseCase,
     private val fetchTopRatedMoviesUseCase: FetchTopRatedMoviesUseCase,
     private val fetchPopularMoviesUseCase: FetchPopularMoviesUseCase,
     private val fetchGenresUseCase: FetchGenresUseCase,
@@ -40,100 +39,35 @@ class HomeViewModel @Inject constructor(
 
     private val _movieList = mutableStateOf<List<Movie>>(emptyList())
     val movieList: State<List<Movie>> = _movieList
-    private val _filteredMovieList = mutableNotReplayFlow<List<MovieView>>()
-    val filteredMovieList: SharedFlow<List<MovieView>> = _filteredMovieList
     private val _genresDict = mutableNotReplayFlow<Map<Int, String>>()
     val genresDict: SharedFlow<Map<Int, String>> = _genresDict
     private val _isLoading = mutableStateOf<HomeState>(HomeState.Loading)
     val isLoading: State<HomeState> = _isLoading
     private val _shouldGoToLogin = mutableNotReplayFlow<Boolean>()
     val shouldGoToLogin: SharedFlow<Boolean> = _shouldGoToLogin
-    private val _query = MutableLiveData<String>()
-    val query: LiveData<String> = _query
-
-    companion object {
-        const val DEBOUNCE_PERIOD = 500L
-    }
-
-    init {
-        search()
-    }
 
     fun cleanGuestData() {
         viewModelScope.launch(dispatcherProvider.main) {
             cleanGuestFavUseCase()
-                .flowOn(dispatcherProvider.main)
-                .collect {
-                    it
-                }
-        }
-    }
-
-    fun filterMovies(query: String) {
-        viewModelScope.launch(dispatcherProvider.main) {
-            search(query)
-        }
-    }
-
-    private fun search(query: String = "") {
-        _query.value = query
-        viewModelScope.launch(dispatcherProvider.main) {
-            _query
-                .asFlow()
-                .debounce(DEBOUNCE_PERIOD)
-                .flowOn(dispatcherProvider.main)
-                .distinctUntilChanged()
-                .flatMapLatest { query ->
-                    val filtered = if (query.isNotEmpty()) {
-                        movieList.value.filter { it.title.contains(query, ignoreCase = true) }
-                    } else {
-                        movieList.value
-                    }
-                    flowOf(filtered.map { it.toMovieView() })
-                }
-                .catch {
-                    _filteredMovieList.tryEmit(emptyList())
-                }
-                .collect {
-                    _filteredMovieList.tryEmit(it)
-                }
-        }
-    }
-
-    fun loadLocalDataOrFetch() {
-        viewModelScope.launch(dispatcherProvider.main) {
-            existLocalDataUseCase()
-                .flowOn(dispatcherProvider.main)
-                .catch {
-                    _isLoading.value = HomeState.Error(it.message ?: "Error")
-                }.collect { existLocalData ->
-                    if (existLocalData) {
-                        getLocalMovieData()
-                        getLocalGenreData()
-                    } else {
-                        loadRemoteData()
-                    }
-
-                }
         }
     }
 
     fun loadRemoteData() {
-        viewModelScope.launch(dispatcherProvider.io) {
+        viewModelScope.launch(dispatcherProvider.main) {
             combine(
                 fetchTopRatedMoviesUseCase(),
                 fetchPopularMoviesUseCase(),
                 fetchGenresUseCase()
             ) { t, p, g -> (t || p) && g }
                 .flowOn(dispatcherProvider.main)
-                .catch {
-                    _isLoading.value = HomeState.Error(it.message ?: "Error")
-                }.collect {
+                .onStart { _isLoading.value = HomeState.Loading }
+                .catch { _isLoading.value = HomeState.Error(it.message ?: "Error") }
+                .collect {
                     if (it) {
-                        getLocalGenreData()
-                        getLocalMovieData()
-                    } else {
-                        _isLoading.value = HomeState.Loading
+                        viewModelScope.launch(dispatcherProvider.io) {
+                            getLocalGenreData()
+                            getLocalMovieData()
+                        }
                     }
                 }
         }
@@ -142,7 +76,7 @@ class HomeViewModel @Inject constructor(
     private fun getLocalMovieData() {
         viewModelScope.launch(dispatcherProvider.main) {
             combine(
-            getTopRatedMoviesUseCase(),
+                getTopRatedMoviesUseCase(),
                 getPopularMoviesUseCase()
             ) { t, p -> t.plus(p) }
                 .flowOn(dispatcherProvider.main)
@@ -150,7 +84,6 @@ class HomeViewModel @Inject constructor(
                     _isLoading.value = HomeState.Error(it.message ?: "Error")
                 }.collect {
                     _movieList.value = it
-                    filterMovies(query = "")
                     _isLoading.value = HomeState.Ready
                 }
         }
@@ -163,7 +96,7 @@ class HomeViewModel @Inject constructor(
                 .collect {
                     if (it.isNotEmpty()) {
                         // mapper elements from genre list to map
-                        _genresDict.tryEmit(it.associate { it.id to it.name })
+                        _genresDict.tryEmit(it.associate { genre -> genre.id to genre.name })
                     }
                 }
         }
@@ -173,12 +106,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(dispatcherProvider.main) {
             signOutUseCase()
                 .flowOn(dispatcherProvider.main)
-                .catch {
-                    _shouldGoToLogin.tryEmit(false)
-                }
-                .collect {
-                    _shouldGoToLogin.tryEmit(it)
-                }
+                .catch { _shouldGoToLogin.tryEmit(false) }
+                .collect { _shouldGoToLogin.tryEmit(it) }
         }
     }
 

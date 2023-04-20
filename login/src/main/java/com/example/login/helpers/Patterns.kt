@@ -1,10 +1,13 @@
 package com.example.login.helpers
 
+/**
+ * The Patterns class defines regular expression patterns.
+ */
 class Patterns {
 
-    // The companion object defines regular expression patterns
     companion object {
 
+        // The regular expression ensures email addresses are valid.
         val emailPattern = "^[^@]{3,}@[^@\\.]{3,}\\.[^@\\.]{2,}$".toRegex()
 
         // The regular expression ensures passwords are

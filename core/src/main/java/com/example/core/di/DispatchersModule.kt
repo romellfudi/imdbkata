@@ -17,6 +17,9 @@ class DispatchersModule {
     fun provideDispatcherProvider(): DispatcherProvider = DefaultDispatcherProvider()
 }
 
+/**
+ * Interface to provide the dispatchers
+ */
 interface DispatcherProvider {
 
     val main: CoroutineDispatcher
@@ -26,6 +29,9 @@ interface DispatcherProvider {
     val default: CoroutineDispatcher
 }
 
+/**
+ * Default implementation of [DispatcherProvider]
+ */
 class DefaultDispatcherProvider : DispatcherProvider {
 
     override val main: CoroutineDispatcher
