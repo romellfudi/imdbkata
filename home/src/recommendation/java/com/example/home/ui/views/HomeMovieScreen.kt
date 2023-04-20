@@ -189,13 +189,13 @@ fun MovieDetailInfoContent(
                 }
         ) {
             val buttonText = stringResource(if(isFav) R.string.drop_to_my_list else R.string.add_to_my_list)
-            val buttonColor = if(isFav) Color3 else Color1
+            val buttonColor = if(isFav) ColorDarkSecondary else ColorPrimary
             Text(
                 text = buttonText,
                 textAlign = TextAlign.Center,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color2,
+                color = ColorDarkPrimary,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
@@ -281,7 +281,7 @@ fun MovieDetailToolbar(
         Icon(
             imageVector = Icons.Filled.ArrowBack,
             contentDescription = "icon",
-            tint = Color2,
+            tint = ColorDarkPrimary,
             modifier = Modifier
                 .clickable { backScreen() }
                 .constrainAs(back) {
@@ -294,7 +294,7 @@ fun MovieDetailToolbar(
             text = title,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = Color2,
+            color = ColorDarkPrimary,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.constrainAs(movieTitle) {
                 linkTo(
@@ -341,7 +341,7 @@ fun MovieDetailHeader(
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
-                    .background(Color1)
+                    .background(ColorPrimary)
                     .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)
@@ -351,7 +351,7 @@ fun MovieDetailHeader(
                 text = movie.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = Color2,
+                color = ColorDarkPrimary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.constrainAs(movieTitle) {
@@ -370,7 +370,7 @@ fun MovieDetailHeader(
                 text = movie.originalTitle + stringResource(R.string.original_title),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = Color3,
+                color = ColorDarkSecondary,
                 fontSize = 12.sp,
                 modifier = Modifier.constrainAs(original) {
                     linkTo(
@@ -387,7 +387,7 @@ fun MovieDetailHeader(
                 text = stringResource(R.string.id) + movie.id,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = Color3,
+                color = ColorDarkSecondary,
                 fontSize = 12.sp,
                 modifier = Modifier.constrainAs(idMovie) {
                     linkTo(
@@ -431,11 +431,11 @@ fun MovieDetailSummary(
         val genresText = movie.genres.firstOrNull()?.name
         Text(
             text = genresText.orEmpty(),
-            color = Color3,
+            color = ColorDarkSecondary,
             fontSize = 10.sp,
             modifier = Modifier
                 .border(
-                    BorderStroke(0.5.dp, Color3),
+                    BorderStroke(0.5.dp, ColorDarkSecondary),
                     RoundedCornerShape(4.dp)
                 )
                 .padding(vertical = padding_6, horizontal = padding_4)
@@ -458,7 +458,7 @@ fun MovieDetailSummary(
         )
         Text(
             text = movie.voteAverage.toString(),
-            color = Color3,
+            color = ColorDarkSecondary,
             fontSize = 12.sp,
             modifier = Modifier
                 .constrainAs(ranking) {
@@ -469,7 +469,7 @@ fun MovieDetailSummary(
         )
         Text(
             text = movie.overview,
-            color = Color2,
+            color = ColorDarkPrimary,
             fontSize = 14.sp,
             maxLines = 4,
             fontWeight = FontWeight.Normal,
@@ -506,7 +506,7 @@ fun MovieDetailCast(
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
-                    .background(Color1)
+                    .background(ColorPrimary)
                     .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)
@@ -516,7 +516,7 @@ fun MovieDetailCast(
                 text = stringResource(R.string.cast),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = Color2,
+                color = ColorDarkPrimary,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.constrainAs(movieTitle) {
@@ -585,7 +585,7 @@ fun MovieDetailCastItem(
             fontSize = 10.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Light,
-            color = Color2,
+            color = ColorDarkPrimary,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.constrainAs(name) {
                             linkTo(
@@ -604,7 +604,7 @@ fun MovieDetailCastItem(
             maxLines = 1,
             fontSize = 10.sp,
             fontWeight = FontWeight.Light,
-            color = Color3,
+            color = ColorDarkSecondary,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .constrainAs(originalName) {
@@ -635,7 +635,7 @@ fun IMDBMoviesRecommendations(
 
         Divider(
             modifier = Modifier
-                .background(Color5)
+                .background(ColorSecondary)
                 .height(padding_16)
                 .constrainAs(spacer) {
                     linkTo(
@@ -659,7 +659,7 @@ fun IMDBMoviesRecommendations(
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
-                    .background(Color1)
+                    .background(ColorPrimary)
                     .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)

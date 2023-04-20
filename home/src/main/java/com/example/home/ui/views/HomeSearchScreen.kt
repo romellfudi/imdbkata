@@ -148,7 +148,7 @@ fun MovieCard(
             .fillMaxWidth(),
         onClick = { toMovieDetail(movieView.id) },
         elevation = 3.dp,
-        backgroundColor = Color3,
+        backgroundColor = ColorDarkSecondary,
         shape = RoundedCornerShape(corner = CornerSize(6.dp))
     ) {
         ConstraintLayout(
@@ -188,7 +188,7 @@ fun MovieCard(
             Text(
                 text = movieView.title,
                 style = TextStyle(
-                    color = Color2,
+                    color = ColorDarkPrimary,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                 ),
@@ -201,7 +201,7 @@ fun MovieCard(
             Text(
                 text = movieView.releaseDate,
                 style = TextStyle(
-                    color = Color4,
+                    color = colorDarkTertiary,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                 ),
@@ -214,7 +214,7 @@ fun MovieCard(
             Text(
                 text = movieView.genreIds.map { genres[it] }.joinToString(", "),
                 style = TextStyle(
-                    color = Color4,
+                    color = colorDarkTertiary,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Italic

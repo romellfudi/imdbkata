@@ -3,9 +3,7 @@ package com.example.core.view
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import com.example.core.R
 
 /**
  * @author @romellfudi
@@ -28,9 +26,9 @@ val DarkThemeColors = darkColors(
 @Composable
 fun getTextFieldColors(isDarkMode: Boolean): TextFieldColors {
     return TextFieldDefaults.outlinedTextFieldColors(
-        backgroundColor = if(isDarkMode) Color4 else Color5,
-        cursorColor = if (isDarkMode) Color5 else Color4,
-        disabledLabelColor = if (isDarkMode) Color5 else Color4
+        backgroundColor = if(isDarkMode) colorDarkTertiary else ColorSecondary,
+        cursorColor = if (isDarkMode) ColorSecondary else colorDarkTertiary,
+        disabledLabelColor = if (isDarkMode) ColorSecondary else colorDarkTertiary
     )
 }
 

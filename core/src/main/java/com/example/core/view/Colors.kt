@@ -3,14 +3,14 @@ package com.example.core.view
 import androidx.compose.ui.graphics.Color
 
 // Yellow
-val Color1 = Color(0xFFF6C700)
-// Black
-val Color2 = Color(0xFF000000)
-// Gray
-val Color3 = Color(0xFF9D9C9C)
-// Dark Gray
-val Color4 = Color(0xFF4B4747)
+val ColorPrimary = Color(0xFFF6C700)
 // White
-val Color5 = Color(0xFFF5F5F5)
+val ColorSecondary = Color(0xFFF5F5F5)
+// Black
+val ColorDarkPrimary = Color(0xFF000000)
+// Gray
+val ColorDarkSecondary = Color(0xFF9D9C9C)
+// Dark Gray
+val colorDarkTertiary = Color(0xFF4B4747)
 // Light Gray
 val SeparatorColor = Color(0xFFD8D8D8)

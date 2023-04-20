@@ -244,7 +244,7 @@ fun IMDBMovies(
 
         Divider(
             modifier = Modifier
-                .background(Color5)
+                .background(ColorSecondary)
                 .height(padding_16)
                 .constrainAs(spacer) {
                     linkTo(
@@ -268,7 +268,7 @@ fun IMDBMovies(
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
-                    .background(Color1)
+                    .background(ColorPrimary)
                     .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)

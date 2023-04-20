@@ -139,7 +139,7 @@ fun BottomBar(
     ConstraintLayout(
         modifier = modifier
             .clip(shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-            .background(Color1)
+            .background(ColorPrimary)
             .fillMaxWidth()
     ) {
         val (movie, search, player, profile, b) = createRefs()
@@ -216,7 +216,7 @@ fun TabView(
 ) {
     val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
 
-    val contentColor = if (selected) Color2 else Color2.copy(alpha = 0.3f)
+    val contentColor = if (selected) ColorDarkPrimary else ColorDarkPrimary.copy(alpha = 0.3f)
 
     ConstraintLayout(
         modifier = modifier

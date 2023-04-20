@@ -11,7 +11,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,11 +22,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -106,7 +102,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color1)
+            .background(ColorPrimary)
             .padding(20.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -152,7 +148,7 @@ fun LoginScreen(
                 text = AnnotatedString(stringResource(R.string.forgot_password)),
                 onClick = { },
                 style = TextStyle(
-                    color = Color3,
+                    color = ColorDarkSecondary,
                     fontSize = 15.sp,
                     fontFamily = FontFamily.Default,
                     textAlign = TextAlign.Left
@@ -173,8 +169,8 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (isReadyToLogin) Color4 else Color3,
-                    contentColor = Color5
+                    backgroundColor = if (isReadyToLogin) colorDarkTertiary else ColorDarkSecondary,
+                    contentColor = ColorSecondary
                 ),
                 enabled = isReadyToLogin
             ) {

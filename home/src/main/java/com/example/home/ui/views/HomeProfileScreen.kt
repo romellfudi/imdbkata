@@ -196,7 +196,7 @@ fun ProfileHeader(userView: UserView?, modifier: Modifier = Modifier) {
         )
         Divider(
             modifier = Modifier
-                .background(Color5)
+                .background(ColorSecondary)
                 .height(0.5.dp)
                 .constrainAs(divider) {
                     linkTo(
@@ -255,7 +255,7 @@ fun NoteViewItem(
             val (background, comment, title, count) = createRefs()
             Box(
                 modifier = Modifier
-                    .background(Color5)
+                    .background(ColorSecondary)
                     .height(80.dp)
                     .width(114.dp)
                     .constrainAs(background) {
@@ -310,7 +310,7 @@ fun NoteViewItem(
             Text(
                 text = noteView.count.toString(),
                 fontSize = 10.sp,
-                color = Color3,
+                color = ColorDarkSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.constrainAs(count) {
@@ -359,7 +359,7 @@ fun FollowList(
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
-                    .background(Color1)
+                    .background(ColorPrimary)
                     .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)
@@ -422,11 +422,11 @@ fun FollowList(
                     text = stringResource(R.string.add_favourite_movies),
                     textAlign = TextAlign.Center,
                     fontSize = 18.sp,
-                    color = Color2,
+                    color = ColorDarkPrimary,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            color = Color1,
+                            color = ColorPrimary,
                             shape = MaterialTheme.shapes.medium
                         )
                         .padding(vertical = padding_16)
@@ -478,7 +478,7 @@ fun MoviesRecentViewed(
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
-                    .background(Color1)
+                    .background(ColorPrimary)
                     .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)
@@ -564,7 +564,7 @@ fun FavouritePeople(
                     .clip(CircleShape)
                     .width(padding_6)
                     .height(padding_24)
-                    .background(Color1)
+                    .background(ColorPrimary)
                     .constrainAs(colorLine) {
                         start.linkTo(parent.start, padding_24)
                         top.linkTo(parent.top, padding_16)
@@ -593,7 +593,7 @@ fun FavouritePeople(
                 Text(
                     text = stringResource(R.string.add_actors_movies),
                     fontSize = 14.sp,
-                    color = Color2,
+                    color = ColorDarkPrimary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.constrainAs(bodyRef) {
                         start.linkTo(parent.start, padding_24)
@@ -626,11 +626,11 @@ fun FavouritePeople(
                     text = stringResource(R.string.add_favourite_actors),
                     textAlign = TextAlign.Center,
                     fontSize = 18.sp,
-                    color = Color2,
+                    color = ColorDarkPrimary,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            color = Color1,
+                            color = ColorPrimary,
                             shape = MaterialTheme.shapes.medium
                         )
                         .padding(vertical = padding_16)

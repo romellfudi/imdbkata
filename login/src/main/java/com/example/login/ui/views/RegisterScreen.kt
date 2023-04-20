@@ -122,15 +122,15 @@ fun RegisterScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color5)
+            .background(ColorSecondary)
     )
     Column(
         modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 0.dp),
         verticalArrangement = Arrangement.Top,
     ) {
         TopAppBar(title = { Text("") },
-            backgroundColor = Color5,
-            contentColor = Color2,
+            backgroundColor = ColorSecondary,
+            contentColor = ColorDarkPrimary,
             navigationIcon = {
                 IconButton(onClick = { viewModel.onBack() }) {
                     Icon(
@@ -153,7 +153,7 @@ fun RegisterScreen(
             style = TextStyle(
                 fontFamily = FontFamily.Default,
                 fontWeight = FontWeight.Bold,
-                color = if (!isDark) Color2 else Color4)
+                color = if (!isDark) ColorDarkPrimary else colorDarkTertiary)
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -208,7 +208,7 @@ fun RegisterScreen(
             Text(
                 text = AnnotatedString(stringResource(R.string.user_register_tips)),
                 style = TextStyle(
-                    color = Color3,
+                    color = ColorDarkSecondary,
                     fontSize = 15.sp,
                     fontFamily = FontFamily.Default,
                     textAlign = TextAlign.Left
@@ -240,8 +240,8 @@ fun RegisterButton(
             shape = RoundedCornerShape(15.dp),
             modifier = modifier,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (isReadyToLogin) Color4 else Color3,
-                contentColor = Color5
+                backgroundColor = if (isReadyToLogin) colorDarkTertiary else ColorDarkSecondary,
+                contentColor = ColorSecondary
             ),
             enabled = isReadyToLogin
         ) {

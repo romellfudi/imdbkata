@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.core.view.Color1
+import com.example.core.view.ColorPrimary
 import com.example.core.view.compose.AppResourceImage
 import com.example.login.R
 import com.example.login.ui.viewmodels.SplashViewModel
@@ -45,7 +45,7 @@ fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color1)
+            .background(color = ColorPrimary)
     ) {
         AppResourceImage(
             R.drawable.imdb,
