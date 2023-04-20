@@ -144,7 +144,7 @@ fun MovieCard(
 ) {
     Card(
         modifier = Modifier
-            .padding(horizontal = 4.dp, vertical = 8.dp)
+            .padding(horizontal = 4.dp, vertical = 4.dp)
             .fillMaxWidth(),
         onClick = { toMovieDetail(movieView.id) },
         elevation = 3.dp,
@@ -152,7 +152,9 @@ fun MovieCard(
         shape = RoundedCornerShape(corner = CornerSize(6.dp))
     ) {
         ConstraintLayout(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .padding(padding_6)
+                .fillMaxWidth()
         ) {
             val (movieCard, plus, title, date, genresView) = createRefs()
             AsyncImage(
@@ -167,7 +169,7 @@ fun MovieCard(
                     .height(160.dp)
                     .width(110.dp)
                     .constrainAs(movieCard) {
-                        start.linkTo(parent.start, (-10).dp)
+                        start.linkTo(parent.start, no_padding)
                         top.linkTo(parent.top)
                     }
             )
