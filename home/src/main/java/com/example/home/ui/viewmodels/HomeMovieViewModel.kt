@@ -11,8 +11,8 @@ import com.example.data.models.toCastModel
 import com.example.home.helpers.HomeState
 import com.example.home.ui.dataview.MovieDetailView
 import com.example.home.ui.dataview.toMovieView
-import com.example.home.usecase.local.IsMovieFavouriteUseCase
 import com.example.home.usecase.local.InsertFavouriteUseCase
+import com.example.home.usecase.local.IsMovieFavouriteUseCase
 import com.example.home.usecase.local.RemoveFavouriteUseCase
 import com.example.home.usecase.remote.FetchMovieCreditsUseCase
 import com.example.home.usecase.remote.FetchMovieDetailUseCase

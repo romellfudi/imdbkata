@@ -27,9 +27,15 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.core.view.*
-import com.example.data.models.*
+import com.example.data.models.CastView
+import com.example.data.models.NoteView
+import com.example.data.models.castViewList
+import com.example.data.models.noteViewMockList
 import com.example.home.R
-import com.example.home.ui.dataview.*
+import com.example.home.ui.dataview.MovieView
+import com.example.home.ui.dataview.UserView
+import com.example.home.ui.dataview.movieViewRVList
+import com.example.home.ui.dataview.picAvailable
 import com.example.home.ui.viewmodels.HomeProfileViewModel
 
 /**
