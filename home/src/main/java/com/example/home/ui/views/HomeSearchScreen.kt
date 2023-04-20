@@ -15,6 +15,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
@@ -25,7 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.core.view.*
 import com.example.core.view.compose.FailedAnimation
 import com.example.core.view.compose.LoadingAnimation
@@ -48,11 +51,13 @@ fun HomeSearchScreen(
 
     val genresDict = viewModel.genresDict.collectAsState(emptyMap())
     val filteredMovies by viewModel.filteredMovieList.observeAsState(emptyList())
+    val userFavList by viewModel.userFavList.collectAsState(emptyList())
     val isLoading = remember { viewModel.isLoading }
     val queryValue: String by viewModel.query.observeAsState(initial = "")
 
     LaunchedEffect("Load Movies") {
         viewModel.loadLocalDataOrFetch()
+        viewModel.loadFav()
     }
 
     when (isLoading.value) {
@@ -66,7 +71,9 @@ fun HomeSearchScreen(
             MoviesList(
                 queryValue = queryValue,
                 viewModel = viewModel,
-                movies = filteredMovies,
+                movies = filteredMovies.map { movie ->
+                    movie.copy(isFav = userFavList.any { it == movie.id })
+                },
                 genres = genresDict.value,
                 toMovieDetail = toMovieDetail,
                 modifier = Modifier.fillMaxSize()
@@ -122,7 +129,7 @@ fun MoviesList(
             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
         ) {
             items(movies) {
-                MovieCard(movie = it, genres = genres, toMovieDetail = toMovieDetail)
+                MovieCard(movieView = it, genres = genres, toMovieDetail = toMovieDetail)
             }
         }
     }
@@ -131,7 +138,7 @@ fun MoviesList(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MovieCard(
-    movie: MovieView,
+    movieView: MovieView,
     genres: Map<Int, String>,
     toMovieDetail: (Int) -> Unit
 ) {
@@ -139,53 +146,83 @@ fun MovieCard(
         modifier = Modifier
             .padding(horizontal = 4.dp, vertical = 8.dp)
             .fillMaxWidth(),
-        onClick = { toMovieDetail(movie.id) },
+        onClick = { toMovieDetail(movieView.id) },
         elevation = 3.dp,
         backgroundColor = Color3,
         shape = RoundedCornerShape(corner = CornerSize(6.dp))
     ) {
-
-        Row(modifier = Modifier.padding(8.dp)) {
-            Image(
-                painter =
-                rememberAsyncImagePainter(movie.posterUrl),
-                contentDescription = "Movie poster",
-                contentScale = ContentScale.FillHeight,
+        ConstraintLayout(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            val (movieCard, plus, title, date, genresView) = createRefs()
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(movieView.posterUrl)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.placeholder),
+                contentDescription = "movie poster",
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier
-                    .padding(1.dp)
-                    .size(130.dp)
+                    .height(160.dp)
+                    .width(110.dp)
+                    .constrainAs(movieCard) {
+                        start.linkTo(parent.start, (-10).dp)
+                        top.linkTo(parent.top)
+                    }
             )
-            Column(
-                modifier = Modifier.weight(1f),
-                Arrangement.Center
-            ) {
-                Text(
-                    text = movie.title,
-                    style = TextStyle(
-                        color = Color2,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                )
-                Text(
-                    text = movie.releaseDate,
-                    style = TextStyle(
-                        color = Color4,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                )
-                Spacer(modifier = Modifier.height(padding_6))
-                Text(
-                    text = movie.genreIds.map { genres[it] }.joinToString(", "),
-                    style = TextStyle(
-                        color = Color4,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontStyle = FontStyle.Italic
-                    )
-                )
-            }
+            Image(
+                painter = painterResource(
+                    id = if (movieView.isFav) R.drawable.fav_plus else R.drawable.plus
+                ),
+                alpha = 0.8f,
+                contentDescription = "plus",
+                modifier = Modifier
+                    .constrainAs(plus) {
+                        start.linkTo(movieCard.start, padding_8)
+                        top.linkTo(parent.top)
+                    }
+            )
+            Text(
+                text = movieView.title,
+                style = TextStyle(
+                    color = Color2,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
+                modifier = Modifier
+                    .constrainAs(title) {
+                        start.linkTo(movieCard.end, padding_8)
+                        top.linkTo(parent.top)
+                    }
+            )
+            Text(
+                text = movieView.releaseDate,
+                style = TextStyle(
+                    color = Color4,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
+                modifier = Modifier
+                    .constrainAs(date) {
+                        start.linkTo(movieCard.end, padding_8)
+                        top.linkTo(title.bottom, padding_4)
+                    }
+            )
+            Text(
+                text = movieView.genreIds.map { genres[it] }.joinToString(", "),
+                style = TextStyle(
+                    color = Color4,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic
+                ),
+                modifier = Modifier
+                    .constrainAs(genresView) {
+                        start.linkTo(movieCard.end, padding_8)
+                        top.linkTo(date.bottom, padding_4)
+                    }
+            )
         }
     }
 }

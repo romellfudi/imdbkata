@@ -90,7 +90,8 @@ fun HomeProfileScreen(
             }
         )
         FollowList(
-            followList = movieLists.filter { it.id in userFavList }
+            followList = movieLists.filter { it.id in
+                    userFavList }
                 .map { movie -> movie.copy(isFav = true) },
             toInitView = { toInitView() },
             toMovieDetail = { toMovieDetail(it) },

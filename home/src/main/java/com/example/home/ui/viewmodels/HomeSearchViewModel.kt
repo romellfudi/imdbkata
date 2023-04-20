@@ -9,10 +9,7 @@ import com.example.data.models.Movie
 import com.example.home.helpers.HomeState
 import com.example.home.ui.dataview.MovieView
 import com.example.home.ui.dataview.toMovieView
-import com.example.home.usecase.local.ExistLocalDataUseCase
-import com.example.home.usecase.local.GetGenresUseCase
-import com.example.home.usecase.local.GetPopularMoviesUseCase
-import com.example.home.usecase.local.GetTopRatedMoviesUseCase
+import com.example.home.usecase.local.*
 import com.example.home.usecase.remote.FetchGenresUseCase
 import com.example.home.usecase.remote.FetchPopularMoviesUseCase
 import com.example.home.usecase.remote.FetchTopRatedMoviesUseCase
@@ -35,6 +32,7 @@ class HomeSearchViewModel @Inject constructor(
     private val getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
     private val getGenresUseCase: GetGenresUseCase,
+    private val getAllFavouriteUseCase: GetAllFavouriteUseCase,
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
@@ -44,6 +42,8 @@ class HomeSearchViewModel @Inject constructor(
     val filteredMovieList: LiveData<List<MovieView>> = _filteredMovieList
     private val _genresDict = mutableNotReplayFlow<Map<Int, String>>()
     val genresDict: SharedFlow<Map<Int, String>> = _genresDict
+    private val _userFavList = mutableNotReplayFlow<List<Int>>()
+    val userFavList: SharedFlow<List<Int>> = _userFavList
     private val _isLoading = mutableStateOf<HomeState>(HomeState.Loading)
     val isLoading: State<HomeState> = _isLoading
     private val _query = MutableLiveData<String>()
@@ -51,6 +51,18 @@ class HomeSearchViewModel @Inject constructor(
 
     companion object {
         const val DEBOUNCE_PERIOD = 500L
+    }
+
+    fun loadFav() {
+        viewModelScope.launch(dispatcherProvider.main) {
+            getAllFavouriteUseCase()
+                .flowOn(dispatcherProvider.main)
+                .catch {
+                    _isLoading.value = HomeState.Error(it.message ?: "Error")
+                }.collect {
+                    _userFavList.emit(it.map { fav -> fav.movieId })
+                }
+        }
     }
 
     fun filterMovies(query: String) {
@@ -127,9 +139,9 @@ class HomeSearchViewModel @Inject constructor(
     private fun getLocalMovieData() {
         viewModelScope.launch(dispatcherProvider.main) {
             combine(
+                getPopularMoviesUseCase(),
             getTopRatedMoviesUseCase(),
-                getPopularMoviesUseCase()
-            ) { t, p -> t.plus(p) }
+            ) { p, t -> p.plus(t) }
                 .flowOn(dispatcherProvider.main)
                 .catch {
                     _isLoading.value = HomeState.Error(it.message ?: "Error")
