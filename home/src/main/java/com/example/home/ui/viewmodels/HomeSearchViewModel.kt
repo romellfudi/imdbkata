@@ -77,9 +77,11 @@ class HomeSearchViewModel @Inject constructor(
                 }
                 .catch {
                     _filteredMovieList.value = emptyList()
+                    _isLoading.value = HomeState.Error(it.message ?: "Error")
                 }
                 .collect {
                     _filteredMovieList.value = it
+                    _isLoading.value = HomeState.Ready
                 }
         }
     }
@@ -104,8 +106,8 @@ class HomeSearchViewModel @Inject constructor(
     private fun loadRemoteData() {
         viewModelScope.launch(dispatcherProvider.io) {
             combine(
-                fetchTopRatedMoviesUseCase(),
                 fetchPopularMoviesUseCase(),
+                fetchTopRatedMoviesUseCase(),
                 fetchGenresUseCase()
             ) { t, p, g -> (t || p) && g }
                 .flowOn(dispatcherProvider.main)
@@ -134,7 +136,6 @@ class HomeSearchViewModel @Inject constructor(
                 }.collect {
                     _movieList.value = it
                     filterMovies(query = _query.value.orEmpty())
-                    _isLoading.value = HomeState.Ready
                 }
         }
     }

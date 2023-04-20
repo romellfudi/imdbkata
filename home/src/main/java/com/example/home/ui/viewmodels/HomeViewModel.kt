@@ -10,10 +10,7 @@ import com.example.home.helpers.HomeState
 import com.example.home.ui.dataview.MovieView
 import com.example.home.ui.dataview.toMovieView
 import com.example.home.usecase.firebase.SignOutUseCase
-import com.example.home.usecase.local.ExistLocalDataUseCase
-import com.example.home.usecase.local.GetGenresUseCase
-import com.example.home.usecase.local.GetPopularMoviesUseCase
-import com.example.home.usecase.local.GetTopRatedMoviesUseCase
+import com.example.home.usecase.local.*
 import com.example.home.usecase.remote.FetchGenresUseCase
 import com.example.home.usecase.remote.FetchPopularMoviesUseCase
 import com.example.home.usecase.remote.FetchTopRatedMoviesUseCase
@@ -36,6 +33,7 @@ class HomeViewModel @Inject constructor(
     private val getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
     private val getGenresUseCase: GetGenresUseCase,
+    private val cleanGuestFavUseCase: CleanGuestFavUseCase,
     private val signOutUseCase: SignOutUseCase,
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
@@ -59,6 +57,16 @@ class HomeViewModel @Inject constructor(
 
     init {
         search()
+    }
+
+    fun cleanGuestData() {
+        viewModelScope.launch(dispatcherProvider.main) {
+            cleanGuestFavUseCase()
+                .flowOn(dispatcherProvider.main)
+                .collect {
+                    it
+                }
+        }
     }
 
     fun filterMovies(query: String) {

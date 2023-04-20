@@ -6,10 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.di.DispatcherProvider
 import com.example.core.tool.mutableNotReplayFlow
+import com.example.data.models.MovieDetailResponse
 import com.example.data.models.toCastModel
 import com.example.home.helpers.HomeState
 import com.example.home.ui.dataview.MovieDetailView
 import com.example.home.ui.dataview.toMovieView
+import com.example.home.usecase.local.IsMovieFavouriteUseCase
+import com.example.home.usecase.local.InsertFavouriteUseCase
+import com.example.home.usecase.local.RemoveFavouriteUseCase
 import com.example.home.usecase.remote.FetchMovieCreditsUseCase
 import com.example.home.usecase.remote.FetchMovieDetailUseCase
 import com.example.home.usecase.remote.FetchMovieListRecommendationUseCase
@@ -28,6 +32,9 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomeMovieViewModel @Inject constructor(
+    private val isMovieFavouriteUseCase: IsMovieFavouriteUseCase,
+    private val insertFavouriteUseCase: InsertFavouriteUseCase,
+    private val removeFavouriteUseCase: RemoveFavouriteUseCase,
     private val fetchMovieDetailUseCase: FetchMovieDetailUseCase,
     private val fetchMovieCreditsUseCase: FetchMovieCreditsUseCase,
     private val fetchMovieRecommendationUseCase: FetchMovieListRecommendationUseCase,
@@ -37,6 +44,8 @@ class HomeMovieViewModel @Inject constructor(
     val isLoading: State<HomeState> = _isLoading
     private val _movieDetail = mutableNotReplayFlow<MovieDetailView>()
     val movieDetail: SharedFlow<MovieDetailView> = _movieDetail
+    private val _isFav = mutableStateOf(false)
+    val isFav: State<Boolean> = _isFav
 
     fun fetchMovieDetail(movieId: Int) {
         viewModelScope.launch(dispatcherProvider.main) {
@@ -56,7 +65,7 @@ class HomeMovieViewModel @Inject constructor(
                 .collect { bundle ->
                     if (bundle != null) {
                         val (movieDetail, pair) = bundle
-                        val (credits,recommendations) = pair
+                        val (credits, recommendations) = pair
                         _movieDetail.tryEmit(
                             MovieDetailView(
                                 movieDetail,
@@ -68,6 +77,37 @@ class HomeMovieViewModel @Inject constructor(
                         _isLoading.value = HomeState.Loading
                     }
                 }
+        }
+    }
+
+    fun isUserFav(movieId: Int) {
+        viewModelScope.launch(dispatcherProvider.main) {
+            isMovieFavouriteUseCase(movieId)
+                .flowOn(dispatcherProvider.main)
+                .collect {
+                    _isFav.value = it
+                }
+        }
+    }
+
+    fun toggleFav(favMovie: Boolean, movie: MovieDetailResponse?) {
+        if (movie == null) return
+        if (favMovie) {
+            viewModelScope.launch(dispatcherProvider.main) {
+                removeFavouriteUseCase(movie.id)
+                    .flowOn(dispatcherProvider.main)
+                    .collect {
+                        _isFav.value = it
+                    }
+            }
+        } else {
+            viewModelScope.launch(dispatcherProvider.main) {
+                insertFavouriteUseCase(movie.id,movie.posterUrl)
+                    .flowOn(dispatcherProvider.main)
+                    .collect {
+                        _isFav.value = it
+                    }
+            }
         }
     }
 

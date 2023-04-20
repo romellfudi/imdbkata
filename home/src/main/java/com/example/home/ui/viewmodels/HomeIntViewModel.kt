@@ -6,11 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.di.DispatcherProvider
 import com.example.core.tool.mutableNotReplayFlow
+import com.example.data.models.UserFav
 import com.example.home.helpers.HomeState
 import com.example.home.ui.dataview.MovieView
 import com.example.home.ui.dataview.toMovieView
 import com.example.home.usecase.local.ExistLocalDataUseCase
-import com.example.home.usecase.local.GetGenresUseCase
+import com.example.home.usecase.local.GetAllFavouriteUseCase
 import com.example.home.usecase.local.GetPopularMoviesUseCase
 import com.example.home.usecase.local.GetTopRatedMoviesUseCase
 import com.example.home.usecase.remote.FetchGenresUseCase
@@ -37,7 +38,7 @@ class HomeIntViewModel @Inject constructor(
     private val fetchGenresUseCase: FetchGenresUseCase,
     private val getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
-    private val getGenresUseCase: GetGenresUseCase,
+    private val getAllFavouriteUseCase: GetAllFavouriteUseCase,
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
@@ -45,6 +46,8 @@ class HomeIntViewModel @Inject constructor(
     val movieTopRatedList: SharedFlow<List<MovieView>> = _movieTopRatedList
     private val _moviePopularList = mutableNotReplayFlow<List<MovieView>>()
     val moviePopularList: SharedFlow<List<MovieView>> = _moviePopularList
+    private val _userFavList = mutableNotReplayFlow<List<Int>>()
+    val userFavList: SharedFlow<List<Int>> = _userFavList
     private val _isLoading = mutableStateOf<HomeState>(HomeState.Loading)
     val isLoading: State<HomeState> = _isLoading
 
@@ -52,8 +55,16 @@ class HomeIntViewModel @Inject constructor(
         const val DEBOUNCE_PERIOD = 500L
     }
 
-    init {
-
+    fun loadFav() {
+        viewModelScope.launch(dispatcherProvider.main) {
+            getAllFavouriteUseCase()
+                .flowOn(dispatcherProvider.main)
+                .catch {
+                    _isLoading.value = HomeState.Error(it.message ?: "Error")
+                }.collect {
+                    _userFavList.emit(it.map { fav -> fav.movieId })
+                }
+        }
     }
 
     fun loadLocalDataOrFetch() {

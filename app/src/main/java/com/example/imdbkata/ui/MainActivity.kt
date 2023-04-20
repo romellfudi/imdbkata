@@ -78,6 +78,7 @@ class MainActivity : ComponentActivity() {
                                 },
                                 homeScreen = {
                                     navigationController.navigateAndReplaceStartRoute("home")
+                                    homeViewModel.cleanGuestData()
                                 },
                                 displayMessage = ::showTextInToast
                             )
@@ -96,6 +97,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("home") {
                             HomeScreen(
+                                toInitView = { navigationController.navigateAndReplaceStartRoute("home") },
                                 toMovieDetail = { navigationController.navigate("detail/$it") },
                                 backScreen = {
                                     navigationController.navigateAndReplaceStartRoute("login")

@@ -34,4 +34,7 @@ object MovieDatabaseModule {
     @Provides
     fun provideGenreDao(movieDataBase: MovieDataBase) = movieDataBase.genreDao()
 
+    @Provides
+    fun provideUserFavDao(movieDataBase: MovieDataBase) = movieDataBase.userFavDao()
+
 }

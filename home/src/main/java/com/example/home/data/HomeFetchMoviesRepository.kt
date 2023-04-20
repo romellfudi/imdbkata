@@ -2,11 +2,13 @@ package com.example.home.data
 
 import com.example.data.models.Genre
 import com.example.data.models.Movie
+import com.example.data.models.UserFav
 import com.example.home.data.api.GenreApi
 import com.example.home.data.api.MovieApi
 import com.example.home.data.api.MovieListApi
 import com.example.home.data.local.GenresDao
 import com.example.home.data.local.MoviesDao
+import com.example.home.data.local.UserFavDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -14,6 +16,7 @@ import javax.inject.Inject
 class HomeFetchMoviesRepository @Inject constructor(
     private val moviesDao: MoviesDao,
     private val genresDao: GenresDao,
+    private val userFavDao: UserFavDao,
     private val movieListApi: MovieListApi,
     private val movieApi: MovieApi,
     private val genreApi: GenreApi
@@ -64,6 +67,22 @@ class HomeFetchMoviesRepository @Inject constructor(
 
     suspend fun existDataStored() = withContext(Dispatchers.IO) {
         moviesDao.existDataStored()
+    }
+
+    suspend fun insertFav(userMail: String,movieId: Int, posterPath:String) = withContext(Dispatchers.IO) {
+        userFavDao.insertFav(UserFav(userMail, movieId,posterPath))
+    }
+
+    suspend fun deleteFav(userMail: String,movieId: Int) = withContext(Dispatchers.IO) {
+        userFavDao.deleteFav(userMail, movieId)
+    }
+
+    suspend fun deleteGuestFav() = withContext(Dispatchers.IO) {
+        userFavDao.deleteGuestFav()
+    }
+
+    suspend fun getAllFavBy(userMail: String) = withContext(Dispatchers.IO) {
+        userFavDao.getAllFavBy(userMail)
     }
 
 }

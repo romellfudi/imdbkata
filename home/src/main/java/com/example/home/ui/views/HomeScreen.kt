@@ -44,6 +44,7 @@ import com.example.home.ui.viewmodels.*
  */
 @Composable
 fun HomeScreen(
+    toInitView: () -> Unit,
     toMovieDetail: (Int) -> Unit,
     backScreen: () -> Unit,
     viewModel: HomeViewModel,
@@ -80,6 +81,7 @@ fun HomeScreen(
             searchViewModel = searchViewModel,
             playerViewModel = playerViewModel,
             profileViewModel = profileViewModel,
+            toInitView = toInitView,
             toMovieDetail = toMovieDetail,
             modifier = Modifier
                 .fillMaxSize()
@@ -284,6 +286,7 @@ fun OptionsNavHost(
     searchViewModel: HomeSearchViewModel,
     playerViewModel: HomePlayerViewModel,
     profileViewModel: HomeProfileViewModel,
+    toInitView: () -> Unit,
     toMovieDetail: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -304,7 +307,7 @@ fun OptionsNavHost(
             HomePlayScreen(playerViewModel, toMovieDetail)
         }
         composable(route = TapViewState.Profile.route) {
-            HomeProfileScreen(profileViewModel, toMovieDetail, viewModel::signOut)
+            HomeProfileScreen(profileViewModel, toInitView, toMovieDetail, viewModel::signOut)
         }
     }
 }

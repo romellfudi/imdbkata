@@ -24,7 +24,8 @@ data class MovieView(
     val voteAverage: Double,
     val voteCount: Int,
     val posterUrl: String,
-    val tileUrl: String
+    val tileUrl: String,
+    val isFav: Boolean = false
 )
 
 fun Movie.toMovieView(): MovieView {
