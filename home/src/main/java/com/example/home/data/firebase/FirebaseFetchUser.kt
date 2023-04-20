@@ -13,10 +13,11 @@ class FirebaseFetchUser @Inject constructor(
     suspend fun getUserProfile(): User? = withContext(Dispatchers.IO) {
         auth.currentUser?.run {
             User(
-                displayName ?: "",
-                email ?: "",
-                photoUrl.toString(),
-                if (providerId.contains("facebook")) "facebook" else "google",
+                name = displayName ?: "",
+                email = if(isAnonymous) "guest" else email ?: "",
+                photoUrl = photoUrl.toString(),
+                provider = if(providerId.contains("facebook")) "facebook" else "google",
+                isAnonymous = isAnonymous
             )
         }
     }

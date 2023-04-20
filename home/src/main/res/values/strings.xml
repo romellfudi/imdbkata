@@ -14,6 +14,7 @@
     <string name="favourite_actors">Favourite Actors</string>
     <string name="add_actors_movies">Add your favourite actors to see their movies</string>
     <string name="add_favourite_actors">Add favourite actors</string>
+    <string name="add_favourite_movies">Add favourite movies</string>
     <string name="log_out">Log out</string>
     <string name="start_marking_list">Start marking your list</string>
     <string name="home">Home</string>
@@ -22,6 +23,7 @@
     <string name="profile">Profile</string>
     <string name="movie_title_default">Movie Title</string>
     <string name="add_to_my_list">Add to my list</string>
+    <string name="drop_to_my_list">Drop to my list</string>
     <string name="recommendations">Recommendations</string>
     <string name="id">ID: </string>
     <string name="original_title"> (original title)</string>

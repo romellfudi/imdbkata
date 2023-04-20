@@ -50,10 +50,12 @@ fun HomeInitScreen(
 
     val movieTopRatedList by viewModel.movieTopRatedList.collectAsState(emptyList())
     val moviePopularList by viewModel.moviePopularList.collectAsState(emptyList())
+    val userFavList by viewModel.userFavList.collectAsState(emptyList())
     val isLoading = remember { viewModel.isLoading }
 
     LaunchedEffect("Load Movies") {
         viewModel.loadLocalDataOrFetch()
+        viewModel.loadFav()
     }
 
     when (isLoading.value) {
@@ -65,14 +67,21 @@ fun HomeInitScreen(
         }
         is HomeState.Ready -> {
             InitView(
-                movieTopRatedList,
-                moviePopularList,
+                updateUserFavMovies(movieTopRatedList,userFavList),
+                updateUserFavMovies(moviePopularList,userFavList),
                 toMovieDetail = toMovieDetail,
                 modifier = Modifier.fillMaxWidth()
             )
         }
     }
 
+}
+
+fun updateUserFavMovies(movieList: List<MovieView>, userFavList: List<Int>): List<MovieView> {
+    return movieList.map { movie ->
+        movie.copy(
+            isFav = userFavList.any { it == movie.id })
+    }
 }
 
 @Composable
@@ -346,7 +355,7 @@ fun IMDBMoviesItem(
             )
             Image(
                 painter = painterResource(
-                    id = R.drawable.plus
+                    id = if (movieModel.isFav) R.drawable.fav_plus else R.drawable.plus
                 ),
                 alpha = 0.8f,
                 contentDescription = "plus",

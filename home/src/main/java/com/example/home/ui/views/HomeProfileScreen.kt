@@ -32,7 +32,10 @@ import com.example.data.models.NoteView
 import com.example.data.models.castViewList
 import com.example.data.models.noteViewMockList
 import com.example.home.R
-import com.example.home.ui.dataview.*
+import com.example.home.ui.dataview.MovieView
+import com.example.home.ui.dataview.UserView
+import com.example.home.ui.dataview.movieViewRVList
+import com.example.home.ui.dataview.picAvailable
 import com.example.home.ui.viewmodels.HomeProfileViewModel
 
 /**
@@ -43,6 +46,7 @@ import com.example.home.ui.viewmodels.HomeProfileViewModel
 @Composable
 fun HomeProfileScreen(
     viewModel: HomeProfileViewModel,
+    toInitView: () -> Unit,
     toMovieDetail: (Int) -> Unit,
     onLogout: () -> Unit,
     isDark: Boolean = isSystemInDarkTheme(),
@@ -52,9 +56,9 @@ fun HomeProfileScreen(
     val firebaseUser by viewModel.user.collectAsState(null)
     val isLoading = remember { viewModel.isLoading }
     val noteViewList = noteViewMockList
-    val followMovieList =
-//        listOf<MovieView>()
-        movieViewFList
+    val movieLists by viewModel.movieList.collectAsState(emptyList())
+    val userFavList by viewModel.userFavList.collectAsState(emptyList())
+
     val recentViewedMovieList =
 //        listOf<MovieView>()
         movieViewRVList
@@ -64,6 +68,9 @@ fun HomeProfileScreen(
 
     LaunchedEffect("Load Profile") {
         viewModel.fetchUser()
+        viewModel.getLocalMovieData()
+        viewModel.loadFav()
+
     }
     val state = rememberScrollState()
     ConstraintLayout(
@@ -89,7 +96,10 @@ fun HomeProfileScreen(
             }
         )
         FollowList(
-            followList = followMovieList,
+            followList = movieLists.filter { it.id in
+                    userFavList }
+                .map { movie -> movie.copy(isFav = true) },
+            toInitView = { toInitView() },
             toMovieDetail = { toMovieDetail(it) },
             modifier = Modifier.constrainAs(followList) {
                 linkTo(start = parent.start, end = parent.end)
@@ -322,6 +332,7 @@ fun NoteViewItem(
 @Composable
 fun FollowList(
     followList: List<MovieView>,
+    toInitView: () -> Unit,
     toMovieDetail: (Int) -> Unit,
     modifier: Modifier
 ) {
@@ -387,6 +398,40 @@ fun FollowList(
                     width = Dimension.fillToConstraints
                 }
             )
+            Button(
+                onClick = toInitView,
+                elevation = buttonNoElevation,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Transparent,
+                    disabledBackgroundColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .constrainAs(followEmptyButton) {
+                        linkTo(
+                            start = parent.start,
+                            startMargin = padding_8,
+                            end = parent.end,
+                            endMargin = padding_8
+                        )
+                        top.linkTo(followEmptyText.bottom)
+                        bottom.linkTo(parent.bottom, padding_8)
+                        width = Dimension.fillToConstraints
+                    }
+            ) {
+                Text(
+                    text = stringResource(R.string.add_favourite_movies),
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    color = Color2,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = Color1,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                        .padding(vertical = padding_16)
+                )
+            }
         } else {
             IMDBProfileMovies(
                 movies = followList,
@@ -616,11 +661,13 @@ fun IMDBProfileCast(
     val state = rememberLazyListState()
     ConstraintLayout(modifier = modifier) {
         val (castcolorLine) = createRefs()
-        ConstraintLayout(modifier = modifier.constrainAs(castcolorLine) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            top.linkTo(parent.top)
-        }.fillMaxWidth()) {
+        ConstraintLayout(modifier = modifier
+            .constrainAs(castcolorLine) {
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                top.linkTo(parent.top)
+            }
+            .fillMaxWidth()) {
             val (listCast) = createRefs()
             LazyRow(
                 contentPadding = PaddingValues(vertical = padding_16),

@@ -55,9 +55,11 @@ fun HomeMovieScreen(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val isLoading = remember { viewModel.isLoading }
     val movieDetailView by viewModel.movieDetail.collectAsState(null)
+    val favMovie = remember { viewModel.isFav }
 
     LaunchedEffect("Load Movie Detail") {
         viewModel.fetchMovieDetail(id)
+        viewModel.isUserFav(id)
     }
 
     when (isLoading.value) {
@@ -74,7 +76,9 @@ fun HomeMovieScreen(
                 MovieDetailInfoContent(
                     toMovieDetail = toMovieDetail,
                     movieDetailView = movieDetailView,
-                    backScreen = backScreen
+                    toggleFav = { viewModel.toggleFav(favMovie.value,movieDetailView?.detail) },
+                    backScreen = backScreen,
+                    isFav = favMovie.value,
                 )
             }
         }
@@ -85,7 +89,9 @@ fun HomeMovieScreen(
 fun MovieDetailInfoContent(
     movieDetailView: MovieDetailView?,
     toMovieDetail: (Int) -> Unit,
+    toggleFav: () -> Unit,
     backScreen: () -> Unit,
+    isFav: Boolean,
     modifier: Modifier = Modifier
 ) {
     val state = rememberScrollState()
@@ -164,9 +170,7 @@ fun MovieDetailInfoContent(
                 }
         )
         Button(
-            onClick = {
-
-            },
+            onClick = { toggleFav() },
             elevation = buttonNoElevation,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent,
@@ -184,8 +188,10 @@ fun MovieDetailInfoContent(
                     width = Dimension.fillToConstraints
                 }
         ) {
+            val buttonText = stringResource(if(isFav) R.string.drop_to_my_list else R.string.add_to_my_list)
+            val buttonColor = if(isFav) Color3 else Color1
             Text(
-                text = stringResource(R.string.add_to_my_list),
+                text = buttonText,
                 textAlign = TextAlign.Center,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -193,7 +199,7 @@ fun MovieDetailInfoContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = Color1,
+                        color = buttonColor,
                         shape = MaterialTheme.shapes.medium
                     )
                     .padding(vertical = padding_4)
@@ -323,11 +329,13 @@ fun MovieDetailHeader(
 ) {
     ConstraintLayout(modifier = modifier) {
         val (barTitle, colorLine, movieTitle, original, idMovie) = createRefs()
-        ConstraintLayout(modifier = modifier.constrainAs(barTitle) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            top.linkTo(parent.top)
-        }.fillMaxWidth()) {
+        ConstraintLayout(modifier = modifier
+            .constrainAs(barTitle) {
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                top.linkTo(parent.top)
+            }
+            .fillMaxWidth()) {
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
@@ -485,11 +493,13 @@ fun MovieDetailCast(
     val state = rememberLazyListState()
     ConstraintLayout(modifier = modifier) {
         val (castcolorLine) = createRefs()
-        ConstraintLayout(modifier = modifier.constrainAs(castcolorLine) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            top.linkTo(parent.top)
-        }.fillMaxWidth()) {
+        ConstraintLayout(modifier = modifier
+            .constrainAs(castcolorLine) {
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                top.linkTo(parent.top)
+            }
+            .fillMaxWidth()) {
             val (colorLine, movieTitle, listCast) = createRefs()
             Box(
                 modifier = Modifier
