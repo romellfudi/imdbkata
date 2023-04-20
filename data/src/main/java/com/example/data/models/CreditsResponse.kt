@@ -23,7 +23,7 @@ data class CastResponse(
 data class CastView(
     val id: Int,
     val name: String,
-    val originalName: String,
+    val character: String,
     val profilePath: String?
 ) {
 
@@ -38,7 +38,7 @@ fun CastResponse.toCastModel(): CastView {
     return CastView(
         id = id,
         name = name,
-        originalName = originalName,
+        character = character,
         profilePath = profilePath
     )
 }
@@ -47,25 +47,25 @@ val castViewList = listOf(
     CastView(
         id = 3131,
         name = "Antonio Banderas",
-        originalName = "Antonio Banderas",
+        character = "Antonio Banderas",
         profilePath = "/n8YlGookYzgD3cmpMP45BYRNIoh.jpg"
     ),
     CastView(
         id = 109,
         name = "Elijah Wood",
-        originalName = "Elijah Wood",
+        character = "Elijah Wood",
         profilePath = "/7UKRbJBNG7mxBl2QQc5XsAh6F8B.jpg"
     ),
     CastView(
         id = 1327,
         name = "Ian McKellen",
-        originalName = "Ian McKellen",
+        character = "Ian McKellen",
         profilePath = "/5cnnnpnJG6TiYUSS7qgJheUZgnv.jpg"
     ),
     CastView(
         id = 6384,
         name = "Keanu Reeves",
-        originalName = "Keanu Reeves",
+        character = "Keanu Reeves",
         profilePath = "/4D0PpNI0kmP58hgrwGC3wCjxhnm.jpg"
     ),
 )

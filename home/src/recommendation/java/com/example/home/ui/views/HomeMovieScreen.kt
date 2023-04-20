@@ -599,7 +599,7 @@ fun MovieDetailCastItem(
                 }
         )
         Text(
-            text = castView.originalName,
+            text = castView.character,
             textAlign = TextAlign.Center,
             maxLines = 1,
             fontSize = 10.sp,
