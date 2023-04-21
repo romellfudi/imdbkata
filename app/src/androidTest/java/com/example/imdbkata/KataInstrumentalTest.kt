@@ -3,7 +3,9 @@ package com.example.imdbkata
 import android.Manifest
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
@@ -18,7 +20,6 @@ import io.github.kakaocup.kakao.common.utilities.getResourceString
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 /**
  * @author @romellfudi
