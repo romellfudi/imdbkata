@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -13,9 +12,7 @@ import com.example.imdbkata.ui.MainActivity
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.github.kakaocup.compose.node.element.ComposeScreen.Companion.onComposeScreen
-import io.github.kakaocup.compose.node.element.KNode
 import io.github.kakaocup.kakao.common.utilities.getResourceString
 import org.junit.Rule
 import org.junit.Test
@@ -26,37 +23,10 @@ import org.junit.runner.RunWith
  * @date 2023-03-16
  * @version 1.0.a
  */
-class ComposeMainActivity(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<ComposeMainActivity>(
-        semanticsProvider = semanticsProvider,
-    ) {
-    val imdbLogoImage: KNode = child { hasTestTag("splash_screen_image") }
-    val emailFieldText: KNode = child { hasTestTag("login_screen_email") }
-    val passwordFieldText: KNode = child { hasTestTag("login_screen_password") }
-    val loginButton: KNode = child { hasTestTag("login_screen_login_button") }
-    val newRegisterButton: KNode = child { hasTestTag("login_screen_new_register_button") }
-    val guestAction: KNode = child { hasTestTag("login_screen_guest_action") }
-    val searchFieldText: KNode = child { hasTestTag("home_screen_search_field") }
-    val homeLazyColumn: KNode = child { hasTestTag("home_screen_list") }
-    val nameRFieldText: KNode = child { hasTestTag("register_screen_name") }
-    val emailRFieldText: KNode = child { hasTestTag("register_screen_email") }
-    val passwordRFieldText: KNode = child { hasTestTag("register_screen_password") }
-    val registerButton: KNode = child { hasTestTag("register_screen_register_button") }
-}
-
 @RunWith(AndroidJUnit4::class)
-class KataInstrumentalTest : TestCase(
+class DojoInstrumentalTest : TestCase(
     kaspressoBuilder = Kaspresso.Builder.withComposeSupport()
 ) {
-
-    private val username = "Freddy"
-    private val randomString = (1..5).map { ('a'..'z').random() }.joinToString("")
-    private val badEmail = "${username.toLowerCase()}.$randomString@example"
-    private val goodEmail = "$badEmail.com"
-    private val goodPassword = "123qweASD!"
-    private val badPassword1 = "123qweASD"
-    private val badPassword2 = "123qwe!@"
-    private val badPassword3 = "12345678910"
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
@@ -83,7 +53,7 @@ class KataInstrumentalTest : TestCase(
                 }
                 nameRFieldText {
                     assertIsDisplayed()
-                    performTextInput(username)
+                    performTextInput(userName)
                 }
                 emailRFieldText {
                     assertIsDisplayed()
@@ -186,7 +156,7 @@ class KataInstrumentalTest : TestCase(
                 }
                 nameRFieldText {
                     assertIsDisplayed()
-                    performTextInput(username)
+                    performTextInput(userName)
                 }
                 emailRFieldText {
                     assertIsDisplayed()
@@ -216,7 +186,7 @@ class KataInstrumentalTest : TestCase(
                 }
                 nameRFieldText {
                     assertIsDisplayed()
-                    performTextInput(username)
+                    performTextInput(userName)
                 }
                 emailRFieldText {
                     assertIsDisplayed()
@@ -224,17 +194,17 @@ class KataInstrumentalTest : TestCase(
                 }
                 passwordRFieldText {
                     assertIsDisplayed()
-                    performTextInput(badPassword1)
+                    performTextInput(badPasswordNotEspecialCharacters)
                 }
                 performCloseSoftKeyBoard()
                 registerButton {
                     assertIsDisplayed()
                     assertIsNotEnabled()
                 }
-                passwordRFieldText { performTextReplacement(badPassword2) }
+                passwordRFieldText { performTextReplacement(badPasswordNotCapitalizeLetters) }
                 performCloseSoftKeyBoard()
                 registerButton { assertIsNotEnabled() }
-                passwordRFieldText { performTextReplacement(badPassword3) }
+                passwordRFieldText { performTextReplacement(badPasswordOnlyNumbers) }
                 performCloseSoftKeyBoard()
                 registerButton { assertIsNotEnabled() }
             }
