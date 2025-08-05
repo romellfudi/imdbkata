@@ -1,4 +1,4 @@
-![Gemini_Generated_Image_ll3ym4ll3ym4ll3y](https://github.com/user-attachments/assets/1e1eec20-93b1-4666-83d3-9cc6b7275676)
+![Gemini_Generated_Image_97dt1w97dt1w97dt](https://github.com/user-attachments/assets/b6510b24-76f5-4026-89d2-849e9953c2f8)
 
 # IMDB KATA Project
 
